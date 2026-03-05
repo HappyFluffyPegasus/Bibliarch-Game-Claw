@@ -323,10 +323,14 @@ export function TimelineSystemPage() {
                           {/* Links */}
                           <div className="flex items-center gap-2 mt-2">
                             {event.linkedSceneId && (
-                              <Film className="w-3 h-3 text-violet-500" title="Linked to Scene" />
+                              <span title="Linked to Scene">
+                                <Film className="w-3 h-3 text-violet-500" />
+                              </span>
                             )}
                             {event.linkedStoryNodeId && (
-                              <BookOpen className="w-3 h-3 text-pink-500" title="Linked to Story" />
+                              <span title="Linked to Story">
+                                <BookOpen className="w-3 h-3 text-pink-500" />
+                              </span>
                             )}
                             {event.linkedCharacters.length > 0 && (
                               <span className="text-[10px] bg-accent px-1.5 py-0.5 rounded">
