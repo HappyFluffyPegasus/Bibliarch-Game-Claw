@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUIStore } from '../stores/storyStore';
 import { cn } from '../lib/utils';
@@ -11,7 +11,8 @@ import {
   Video, 
   Clock,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
 
 const navItems = [
@@ -27,36 +28,109 @@ export function Sidebar() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { sidebarOpen, setSidebarOpen, sidebarWidth, setSidebarWidth } = useUIStore();
-  const [isResizing, setIsResizing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const currentPath = location.pathname.split('/').pop() || 'overview';
   
-  const handleResizeStart = () => {
-    setIsResizing(true);
-    document.addEventListener('mousemove', handleResizeMove);
-    document.addEventListener('mouseup', handleResizeEnd);
-  };
-  
-  const handleResizeMove = (e: MouseEvent) => {
-    const newWidth = Math.max(200, Math.min(400, e.clientX));
-    setSidebarWidth(newWidth);
-  };
-  
-  const handleResizeEnd = () => {
-    setIsResizing(false);
-    document.removeEventListener('mousemove', handleResizeMove);
-    document.removeEventListener('mouseup', handleResizeEnd);
-  };
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const handleNavClick = (path: string) => {
     if (!id) return;
     navigate(`/story/${id}${path}`);
+    if (isMobile) setMobileMenuOpen(false);
   };
   
   const handleHomeClick = () => {
     navigate('/');
+    if (isMobile) setMobileMenuOpen(false);
   };
   
+  // Mobile hamburger button (fixed at bottom)
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+        
+        {/* Mobile Menu Panel */}
+        <div className={cn(
+          "fixed inset-x-0 bottom-0 bg-card border-t border-border rounded-t-3xl z-50 transition-transform duration-300",
+          mobileMenuOpen ? "translate-y-0" : "translate-y-full"
+        )} style={{ maxHeight: '70vh' }}>
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-semibold text-lg">Menu</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 hover:bg-accent rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={handleHomeClick}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-4 rounded-xl transition-colors",
+                  !id ? "bg-primary text-primary-foreground" : "hover:bg-accent"
+                )}
+              >
+                <Home className="w-6 h-6" />
+                <span className="text-xs">Home</span>
+              </button>
+              
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPath === item.id || (item.id === 'overview' && id && currentPath === id);
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.path)}
+                    className={cn(
+                      "flex flex-col items-center gap-2 p-4 rounded-xl transition-colors",
+                      isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent"
+                    )}
+                  >
+                    <Icon className="w-6 h-6" />
+                    <span className="text-xs">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        
+        {/* Floating Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="fixed bottom-4 right-4 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/30 flex items-center justify-center z-30"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+      </>
+    );
+  }
+  
+  // Desktop Sidebar
   return (
     <>
       {/* Mobile overlay */}
@@ -168,14 +242,6 @@ export function Sidebar() {
             </div>
           )}
         </nav>
-        
-        {/* Resize handle */}
-        {sidebarOpen && (
-          <div
-            className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-            onMouseDown={handleResizeStart}
-          />
-        )}
       </aside>
     </>
   );

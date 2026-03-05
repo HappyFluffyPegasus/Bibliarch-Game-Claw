@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { useUIStore } from '../stores/storyStore';
 import { cn } from '../lib/utils';
@@ -13,6 +13,14 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { sidebarOpen, sidebarWidth } = useUIStore();
   const { isOpen, setIsOpen } = useCommandPalette();
   const { id: storyId } = useParams();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,9 +29,12 @@ export function MainLayout({ children }: MainLayoutProps) {
       <main
         className={cn(
           "transition-all duration-200",
-          sidebarOpen ? "lg:ml-[280px]" : "lg:ml-16"
+          !isMobile && (sidebarOpen ? "lg:ml-[280px]" : "lg:ml-16")
         )}
-        style={{ marginLeft: sidebarOpen ? sidebarWidth : 64 }}
+        style={{ 
+          marginLeft: isMobile ? 0 : (sidebarOpen ? sidebarWidth : 64),
+          paddingBottom: isMobile ? '80px' : 0 // Space for mobile nav
+        }}
       >
         {children}
       </main>
