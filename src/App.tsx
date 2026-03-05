@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes';
 import './index.css';
+import { SplashScreen, LoadingScreen } from './components/LoadingScreen';
 
 // Auto-save on route change
 function RouteChangeHandler() {
@@ -16,10 +17,19 @@ function RouteChangeHandler() {
 }
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <BrowserRouter>
-      <RouteChangeHandler />
-      <AppRoutes />
+      {showSplash ? (
+        <SplashScreen onComplete={() => setShowSplash(false)} />
+      ) : (
+        <LoadingScreen isLoading={isLoading}>
+          <RouteChangeHandler />
+          <AppRoutes />
+        </LoadingScreen>
+      )}
     </BrowserRouter>
   );
 }
