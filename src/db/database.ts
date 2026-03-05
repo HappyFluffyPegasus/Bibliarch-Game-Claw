@@ -14,6 +14,8 @@ export interface Story {
   cloudStoryId?: string;
   cloudBundleVersion?: number;
   lastCloudSaveAt?: string;
+  canvasHue?: number;  // #3 review - default 220
+  timelineTags?: Array<{name: string; color: string}>;  // #25 review
 }
 
 export interface StorySettings {
@@ -28,12 +30,13 @@ export interface Canvas {
   parentCanvasId?: string;
   createdAt: string;
   updatedAt: string;
+  canvasHue?: number;  // #3 review
 }
 
 export type CanvasNodeType =
   | 'text' | 'character' | 'event' | 'location' | 'folder'
   | 'list' | 'image' | 'table' | 'relationship-canvas'
-  | 'line' | 'compact-text';
+  | 'line' | 'compact-text' | 'document';  // #1 - added 'document'
 
 export interface CanvasNode {
   id: string;
@@ -78,17 +81,28 @@ export interface Character {
   appearance: CharacterAppearance;
   backstory: string;
   customFields: Record<string, string>;
-  paletteId?: string;
   profileImageAssetId?: string;
   modelAssetId?: string;
   createdAt: string;
   updatedAt: string;
+  // #18 review additions
+  outlookOnLife?: string;
+  favoriteFood?: string;
+  favoriteColor?: string;
+  sortOrder: number;
 }
 
 export interface CharacterAppearance {
   visibleAssets: string[];
   colors: Record<string, string>;
   transforms: Record<string, { target: string; value: number }>;
+}
+
+export interface AudioTrack {
+  id: string;
+  assetId: string;
+  volume: number;
+  loop: boolean;
 }
 
 export interface Scene {
@@ -103,6 +117,16 @@ export interface Scene {
   duration: number;
   createdAt: string;
   updatedAt: string;
+  // #19, #22 review additions
+  audioTracks?: AudioTrack[];  // replaces backgroundMusic
+  lightingPreset?: string;
+  linkedTimelineEventId?: string;
+  thumbnailAssetId?: string;
+  typewriterCPS?: number;  // #21 review
+  // #24 backdrop additions
+  lastBackdropName?: string;
+  backdropCameraPosition?: { x: number; y: number; z: number };
+  backdropCameraRotation?: { x: number; y: number; z: number };
 }
 
 export interface ScenePlacement {
@@ -160,6 +184,7 @@ export interface TimelineEvent {
   subEvents: SubEvent[];
   createdAt: string;
   updatedAt: string;
+  tags?: string[];  // #25 review
 }
 
 export interface SubEvent {
@@ -167,6 +192,12 @@ export interface SubEvent {
   title: string;
   description: string;
   order: number;
+}
+
+export interface ViewportState {
+  cameraPosition: { x: number; y: number; z: number };
+  cameraTarget: { x: number; y: number; z: number };
+  cameraMode: 'orbit' | 'firstPerson';
 }
 
 export interface WorldNode {
@@ -189,6 +220,7 @@ export interface WorldNode {
   environment: unknown;
   createdAt: string;
   updatedAt: string;
+  viewportState?: ViewportState;  // #28 review
 }
 
 export interface WorldObject {
@@ -212,22 +244,6 @@ export interface BuildingData {
   lotId: string;
   walls: unknown[];
   furniture: unknown[];
-}
-
-export interface ColorPalette {
-  id: string;
-  storyId: string;
-  name: string;
-  colors: PaletteColor[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PaletteColor {
-  id: string;
-  name: string;
-  hex: string;
-  category?: string;
 }
 
 export interface Asset {
@@ -256,7 +272,6 @@ export class BibliarchDB extends Dexie {
   timelineTracks!: Table<TimelineTrack>;
   timelineEvents!: Table<TimelineEvent>;
   worldNodes!: Table<WorldNode>;
-  colorPalettes!: Table<ColorPalette>;
   assets!: Table<Asset>;
 
   constructor() {
@@ -267,12 +282,11 @@ export class BibliarchDB extends Dexie {
       canvases: '&id, storyId, parentCanvasId',
       canvasNodes: '&id, storyId, canvasId, type, parentId, [canvasId+type], zIndex',
       connections: '&id, storyId, canvasId, fromNodeId, toNodeId',
-      characters: '&id, storyId, name',
+      characters: '&id, storyId, name, sortOrder',
       scenes: '&id, storyId, locationId',
       timelineTracks: '&id, storyId, order',
       timelineEvents: '&id, storyId, trackId, order',
       worldNodes: '&id, storyId, parentId, level, [storyId+level]',
-      colorPalettes: '&id, storyId',
       assets: '&id, storyId, type, hash',
     });
   }
