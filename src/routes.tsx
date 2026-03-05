@@ -3,6 +3,7 @@ import { DashboardPage } from '../dashboard/DashboardPage';
 import { StoryOverviewPage } from '../dashboard/StoryOverviewPage';
 import { CanvasPage } from '../canvas/CanvasPage';
 import { CharactersPage } from '../character-creator/CharactersPage';
+import { CharacterCreatorPage } from '../character-creator/CharacterCreatorPage';
 import { TimelinePage } from '../timeline/TimelinePage';
 import { MainLayout } from './MainLayout';
 
@@ -12,7 +13,7 @@ export function AppRoutes() {
       <Route path="/" element={<DashboardPage />} />
       <Route path="/story/:id" element={<MainLayout><StoryOverviewPage /></MainLayout>} />
       <Route path="/story/:id/notes" element={<MainLayout><CanvasPage /></MainLayout>} />
-      <Route path="/story/:id/characters" element={<MainLayout><CharactersPage /></MainLayout>} />
+      <Route path="/story/:id/characters" element={<MainLayout><CharacterCreatorPage /></MainLayout>} />
       <Route path="/story/:id/world" element={<MainLayout><WorldPlaceholder /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><ScenesPlaceholder /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelinePage /></MainLayout>} />
