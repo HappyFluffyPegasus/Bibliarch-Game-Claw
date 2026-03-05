@@ -178,7 +178,7 @@ export function CanvasPage() {
       const node = currentNodes.find(n => n.id === nodeId);
       if (node?.linkedCanvasId) {
         loadCanvas(node.linkedCanvasId);
-      } else if (node && (node.type === 'character' || node.type === 'event' || node.type === 'folder')) {
+      } else if (node && (node.type === 'character' || node.type === 'location' || node.type === 'folder')) {
         // Create sub-canvas for this folder node
         const newCanvas = createCanvas(node.text || `${node.type} Canvas`, currentCanvas?.id);
         updateNode(node.id, { linkedCanvasId: newCanvas.id });
@@ -411,7 +411,7 @@ export function CanvasPage() {
         {currentNodes.map(node => {
           const isSelected = selectedNodes.has(node.id);
           const screenPos = canvasToScreen(node.x, node.y);
-          const isFolderType = node.type === 'character' || node.type === 'event' || node.type === 'folder';
+          const isFolderType = node.type === 'character' || node.type === 'location' || node.type === 'folder';
           
           return (
             <div
@@ -436,11 +436,11 @@ export function CanvasPage() {
               <div className={cn(
                 "flex items-center gap-2 px-3 py-2 border-b border-border/50 rounded-t-xl",
                 node.type === 'character' && "bg-blue-500/10",
-                node.type === 'event' && "bg-amber-500/10",
+                node.type === 'location' && "bg-amber-500/10",
                 node.type === 'folder' && "bg-purple-500/10"
               )}>
                 {node.type === 'character' && <User className="w-4 h-4 text-blue-500" />}
-                {node.type === 'event' && <Calendar className="w-4 h-4 text-amber-500" />}
+                {node.type === 'location' && <MapPin className="w-4 h-4 text-amber-500" />}
                 {node.type === 'folder' && <Folder className="w-4 h-4 text-purple-500" />}
                 {node.type === 'text' && <Type className="w-4 h-4 text-muted-foreground" />}
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">

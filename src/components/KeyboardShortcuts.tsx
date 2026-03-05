@@ -75,7 +75,7 @@ export function KeyboardShortcuts({ isOpen, onClose }: KeyboardShortcutsProps) {
         >
           <GlassCard 
             className="w-full max-w-2xl max-h-[80vh] overflow-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => {}}
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">

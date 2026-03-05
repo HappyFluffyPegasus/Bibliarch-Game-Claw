@@ -150,7 +150,7 @@ export function GachaSceneEditor() {
               )}
             >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white font-bold"
-003e
+>
                 {char.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
@@ -282,7 +282,7 @@ export function GachaSceneEditor() {
           </AnimatePresence>
 
           {/* Subtitles */}
-          <{showSubtitles && dialogues.map((dialogue) => (
+           {showSubtitles && dialogues.map((dialogue) => (
             currentTime >= dialogue.startTime && currentTime <= dialogue.startTime + dialogue.duration && (
               <motion.div
                 key={dialogue.id}
@@ -323,7 +323,7 @@ export function GachaSceneEditor() {
               {/* Tracks */}
               <div className="absolute top-8 bottom-0 left-0 right-0">
                 {/* Character tracks */}
-                <{characters.map((char, index) => (
+                 {characters.map((char, index) => (
                   <div 
                     key={char.id}
                     className="h-8 bg-white/5 border-b border-white/10 flex items-center px-2"
@@ -341,7 +341,7 @@ export function GachaSceneEditor() {
                   <span className="text-xs text-pink-400 w-20">Dialogue</span>
                   
                   <div className="flex-1 relative h-6">
-                    <{dialogues.map((d) => (
+                     {dialogues.map((d) => (
                       <div
                         key={d.id}
                         className="absolute top-0 h-full bg-pink-500 rounded px-2 flex items-center"
@@ -362,7 +362,7 @@ export function GachaSceneEditor() {
       </div>
 
       {/* Right Panel - Properties */}
-      <{selectedCharacter && (
+       {selectedCharacter && (
         <motion.div
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -374,7 +374,7 @@ export function GachaSceneEditor() {
           <div className="mb-6">
             <div className="text-xs text-white/50 uppercase tracking-wider mb-2">Pose</div>
             <div className="grid grid-cols-4 gap-2">
-              <{posePresets.map((pose) => (
+               {posePresets.map((pose) => (
                 <button
                   key={pose.id}
                   onClick={() => updateCharacter(selectedCharacter.id, { pose: pose.id })}
@@ -396,7 +396,7 @@ export function GachaSceneEditor() {
           <div className="mb-6">
             <div className="text-xs text-white/50 uppercase tracking-wider mb-2">Expression</div>
             <div className="grid grid-cols-3 gap-2">
-              <{expressionPresets.map((expr) => (
+               {expressionPresets.map((expr) => (
                 <button
                   key={expr.id}
                   onClick={() => updateCharacter(selectedCharacter.id, { expression: expr.id })}

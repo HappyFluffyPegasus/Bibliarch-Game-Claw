@@ -129,7 +129,7 @@ export function MemorySystem({ characterId }: { characterId: string }) {
       </div>
 
       {/* Add Memory Form */}
-      <{isAdding && (
+       {isAdding && (
         <GlassCard className="p-4">
           <h4 className="font-medium mb-3">New Memory</h4>
           

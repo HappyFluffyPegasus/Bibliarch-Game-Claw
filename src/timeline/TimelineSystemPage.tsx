@@ -197,7 +197,7 @@ export function TimelineSystemPage() {
                         t.id === track.id ? { ...t, isExpanded: !t.isExpanded } : t
                       ));
                     }}
-003e
+>
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-3 h-3 rounded-full" 
@@ -209,11 +209,11 @@ export function TimelineSystemPage() {
                       </span>
                     </div>
                     
-                    <{track.isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                     {track.isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </div>
                   
                   {/* Track Events */}
-                  <{track.isExpanded && (
+                   {track.isExpanded && (
                     <div className="divide-y divide-border">
                       {events
                         .filter((_, i) => i % tracks.length === track.order)
@@ -261,21 +261,21 @@ export function TimelineSystemPage() {
                                 {event.timestamp}
                               </span>
                               
-                              <{event.linkedSceneId && (
+                               {event.linkedSceneId && (
                                 <span className="flex items-center gap-1 text-xs text-violet-500">
                                   <Film className="w-3 h-3" />
                                   Linked Scene
                                 </span>
                               )}
                               
-                              <{event.linkedStoryNodeId && (
+                               {event.linkedStoryNodeId && (
                                 <span className="flex items-center gap-1 text-xs text-pink-500">
                                   <BookOpen className="w-3 h-3" />
                                   Linked Story
                                 </span>
                               )}
                               
-                              <{event.tags.map(tag => (
+                               {event.tags.map(tag => (
                                 <span key={tag} className="text-xs text-muted-foreground">
                                   #{tag}
                                 </span>
@@ -329,7 +329,7 @@ export function TimelineSystemPage() {
       </div>
 
       {/* Event Details Panel */}
-      <{selectedEventData && (
+       {selectedEventData && (
         <motion.div
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -388,7 +388,7 @@ export function TimelineSystemPage() {
             <div>
               <label className="text-sm font-medium mb-2 block">Color</label>
               <div className="flex flex-wrap gap-2">
-                <{colorOptions.map((color) => (
+                {colorOptions.map((color) => (
                   <button
                     key={color}
                     onClick={() => {
@@ -431,7 +431,7 @@ export function TimelineSystemPage() {
               
               <div className="space-y-3">
                 <button className="w-full flex items-center gap-3 p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
-003e
+>
                   <Film className="w-5 h-5 text-violet-500" />
                   <div className="text-left">
                     <div className="font-medium">Link to Scene</div>
@@ -440,7 +440,7 @@ export function TimelineSystemPage() {
                 </button>
                 
                 <button className="w-full flex items-center gap-3 p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
-003e
+>
                   <BookOpen className="w-5 h-5 text-pink-500" />
                   <div className="text-left">
                     <div className="font-medium">Link to Story Node</div>
@@ -452,11 +452,11 @@ export function TimelineSystemPage() {
 
             {/* Characters */}
             <div className="pt-4 border-t border-border"
-003e
+>
               <div className="text-sm font-medium mb-3">Involved Characters</div>
               
               <div className="flex flex-wrap gap-2">
-                <{characters.map((char) => (
+                 {characters.map((char) => (
                   <button
                     key={char.id}
                     onClick={() => {
@@ -489,9 +489,9 @@ export function TimelineSystemPage() {
       )}
 
       {/* Add Event Modal */}
-      <{isAddingEvent && (
+       {isAddingEvent && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-003e
+>
           <GlassCard className="w-full max-w-md p-6">
             <h3 className="text-xl font-bold mb-4">Add New Event</h3>
             

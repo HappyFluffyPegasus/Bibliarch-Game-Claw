@@ -64,7 +64,7 @@ function DialoguePreview({
           ? "bg-primary text-primary-foreground rounded-tr-none" 
           : "bg-muted rounded-tl-none"
       )}
-003e
+>
         <p className="text-sm leading-relaxed">{text}</p>
       </div>
     </div>

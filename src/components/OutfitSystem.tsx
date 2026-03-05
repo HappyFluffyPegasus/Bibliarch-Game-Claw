@@ -129,7 +129,7 @@ export function OutfitSystem({ characterId }: { characterId: string }) {
       </div>
 
       {/* Active Outfit Details */}
-      <{activeOutfit && (
+       {activeOutfit && (
         <div className="mt-4 pt-4 border-t border-border">
           <div className="text-xs font-medium text-muted-foreground uppercase mb-2">
             {outfits.find(o => o.id === activeOutfit)?.name} Details
