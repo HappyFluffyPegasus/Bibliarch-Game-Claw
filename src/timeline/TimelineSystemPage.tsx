@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoryStore } from '../stores/storyStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Clock, Plus, Trash2, Link as LinkIcon, Film, BookOpen,
-  ChevronUp, ChevronDown, Calendar, Clock3, Tag
+  ZoomIn, ZoomOut, RotateCcw, Plus, Trash2, 
+  ChevronLeft, ChevronRight, Film, BookOpen,
+  GripVertical, Clock, Calendar
 } from 'lucide-react';
 import { GlassCard } from '../components/GlassCard';
 import { cn } from '../lib/utils';
@@ -16,46 +17,47 @@ interface TimelineEvent {
   order: number;
   title: string;
   description: string;
-  timestamp: string; // "Day 1", "Chapter 3", "Year 847", etc.
-  dateValue?: string; // ISO date for sorting
+  timestamp: string;
+  trackId: string;
   
   // Links to other systems
-  linkedSceneId?: string; // Links to Scene Editor
-  linkedStoryNodeId?: string; // Links to Story Mode
-  linkedCharacters: string[]; // Character IDs involved
+  linkedSceneId?: string;
+  linkedStoryNodeId?: string;
+  linkedCharacters: string[];
   
   // Visuals
   color: string;
-  icon?: string;
   tags: string[];
-  
-  // Status
   status: 'planned' | 'in-progress' | 'completed' | 'cut';
+  
+  // Nested events
+  subEvents?: TimelineEvent[];
+  parentEventId?: string | null;
 }
 
 interface TimelineTrack {
   id: string;
-  storyId: string;
   name: string;
   color: string;
   order: number;
-  isExpanded: boolean;
 }
 
-const colorOptions = [
-  '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e',
-  '#10b981', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6',
-  '#a855f7', '#d946ef', '#ec4899', '#f43f5e',
-];
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 2;
+const ZOOM_STEP = 0.25;
+const TRACK_HEIGHT = 200;
+const TRACK_HEADER_WIDTH = 180;
+const EVENT_WIDTH_BASE = 280;
 
 export function TimelineSystemPage() {
   const { id } = useParams();
-  const { currentStory, characters, scenes, loadStory } = useStoryStore();
+  const { currentStory, characters, loadStory } = useStoryStore();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const [tracks, setTracks] = useState<TimelineTrack[]>([
-    { id: 'main', storyId: id!, name: 'Main Story', color: '#3b82f6', order: 0, isExpanded: true },
-    { id: 'side', storyId: id!, name: 'Side Quests', color: '#22c55e', order: 1, isExpanded: true },
-    { id: 'char', storyId: id!, name: 'Character Arcs', color: '#ec4899', order: 2, isExpanded: false },
+    { id: 'main', name: 'Main Story', color: '#3b82f6', order: 0 },
+    { id: 'side', name: 'Side Quests', color: '#22c55e', order: 1 },
+    { id: 'char', name: 'Character Arcs', color: '#ec4899', order: 2 },
   ]);
   
   const [events, setEvents] = useState<TimelineEvent[]>([
@@ -66,10 +68,12 @@ export function TimelineSystemPage() {
       title: 'The Beginning',
       description: 'Adventure starts in the mysterious forest',
       timestamp: 'Day 1',
+      trackId: 'main',
       linkedCharacters: [],
       color: '#3b82f6',
       tags: ['intro', 'forest'],
       status: 'completed',
+      parentEventId: null,
     },
     {
       id: '2',
@@ -78,10 +82,12 @@ export function TimelineSystemPage() {
       title: 'Meet the Guide',
       description: 'Character introduction scene',
       timestamp: 'Day 1',
+      trackId: 'main',
       linkedCharacters: [],
       color: '#3b82f6',
       tags: ['character-intro'],
       status: 'completed',
+      parentEventId: null,
     },
     {
       id: '3',
@@ -90,15 +96,18 @@ export function TimelineSystemPage() {
       title: 'The Storm',
       description: 'Major plot point - mentor dies',
       timestamp: 'Day 3',
+      trackId: 'main',
       linkedCharacters: [],
       color: '#ef4444',
       tags: ['major-event', 'death'],
       status: 'in-progress',
+      parentEventId: null,
     },
   ]);
   
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
-  const [isAddingEvent, setIsAddingEvent] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
@@ -106,425 +115,440 @@ export function TimelineSystemPage() {
     trackId: 'main',
   });
 
-  useEffect(() => {
-    if (id) loadStory(id);
-  }, [id]);
+  // Calculate timeline width
+  const timelineWidth = useMemo(() => {
+    if (events.length === 0) return 800;
+    const maxOrder = Math.max(...events.map(e => e.order));
+    return Math.max(800, (maxOrder + 3) * EVENT_WIDTH_BASE * zoom);
+  }, [events, zoom]);
+
+  const handleZoomIn = () => setZoom(z => Math.min(MAX_ZOOM, z + ZOOM_STEP));
+  const handleZoomOut = () => setZoom(z => Math.max(MIN_ZOOM, z - ZOOM_STEP));
+  const handleZoomReset = () => setZoom(1);
 
   const addEvent = () => {
     if (!newEvent.title.trim()) return;
     
+    const track = tracks.find(t => t.id === newEvent.trackId);
+    const maxOrder = Math.max(...events.map(e => e.order), -1);
+    
     const event: TimelineEvent = {
       id: Date.now().toString(),
       storyId: id!,
-      order: events.length,
+      order: maxOrder + 1,
       title: newEvent.title,
       description: newEvent.description,
       timestamp: newEvent.timestamp || `Event ${events.length + 1}`,
+      trackId: newEvent.trackId,
       linkedCharacters: [],
-      color: tracks.find(t => t.id === newEvent.trackId)?.color || '#3b82f6',
+      color: track?.color || '#3b82f6',
       tags: [],
       status: 'planned',
+      parentEventId: null,
     };
     
     setEvents([...events, event]);
     setNewEvent({ title: '', description: '', timestamp: '', trackId: 'main' });
-    setIsAddingEvent(false);
+    setIsAdding(false);
   };
 
-  const moveEvent = (eventId: string, direction: 'up' | 'down') => {
-    const index = events.findIndex(e => e.id === eventId);
-    if (index === -1) return;
+  const moveEvent = (eventId: string, direction: 'left' | 'right') => {
+    const eventIndex = events.findIndex(e => e.id === eventId);
+    if (eventIndex === -1) return;
     
     const newEvents = [...events];
-    if (direction === 'up' && index > 0) {
-      [newEvents[index], newEvents[index - 1]] = [newEvents[index - 1], newEvents[index]];
-    } else if (direction === 'down' && index < newEvents.length - 1) {
-      [newEvents[index], newEvents[index + 1]] = [newEvents[index + 1], newEvents[index]];
+    const event = newEvents[eventIndex];
+    
+    if (direction === 'left' && event.order > 0) {
+      const prevEvent = newEvents.find(e => e.order === event.order - 1);
+      if (prevEvent) {
+        prevEvent.order += 1;
+        event.order -= 1;
+      }
+    } else if (direction === 'right') {
+      const maxOrder = Math.max(...events.map(e => e.order));
+      if (event.order < maxOrder) {
+        const nextEvent = newEvents.find(e => e.order === event.order + 1);
+        if (nextEvent) {
+          nextEvent.order -= 1;
+          event.order += 1;
+        }
+      }
     }
     
-    // Update order
-    newEvents.forEach((e, i) => e.order = i);
-    setEvents(newEvents);
+    setEvents(newEvents.sort((a, b) => a.order - b.order));
   };
 
   const deleteEvent = (eventId: string) => {
     setEvents(events.filter(e => e.id !== eventId));
+    if (selectedEvent === eventId) setSelectedEvent(null);
   };
 
   const selectedEventData = events.find(e => e.id === selectedEvent);
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-500';
+      case 'in-progress': return 'bg-blue-500';
+      case 'planned': return 'bg-gray-400';
+      case 'cut': return 'bg-red-500';
+      default: return 'bg-gray-400';
+    }
+  };
+
   return (
-    <div className="h-screen flex bg-background">
-      {/* Main Timeline View */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-violet-500" />
-            <div>
-              <h1 className="text-xl font-bold">Timeline</h1>
-              <p className="text-sm text-muted-foreground">Link events to scenes and story nodes</p>
-            </div>
+    <div className="h-screen flex flex-col bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/50">
+        <div className="flex items-center gap-3">
+          <Clock className="w-6 h-6 text-violet-500" />
+          <div>
+            <h1 className="text-xl font-bold">Timeline</h1>
+            <p className="text-sm text-muted-foreground">Organize your story events</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {/* Zoom Controls */}
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 mr-4">
+            <button onClick={handleZoomOut} className="p-2 hover:bg-accent rounded">
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <span className="text-sm w-12 text-center">{Math.round(zoom * 100)}%</span>
+            <button onClick={handleZoomIn} className="p-2 hover:bg-accent rounded">
+              <ZoomIn className="w-4 h-4" />
+            </button>
+            <button onClick={handleZoomReset} className="p-2 hover:bg-accent rounded">
+              <RotateCcw className="w-4 h-4" />
+            </button>
           </div>
           
           <button
-            onClick={() => setIsAddingEvent(true)}
+            onClick={() => setIsAdding(true)}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90"
           >
             <Plus className="w-4 h-4" />
             Add Event
           </button>
         </div>
+      </div>
 
-        {/* Tracks */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-6">
-            {tracks.map((track) => {
-              // Filter events by track - for now using color or showing all
-              const trackEvents = events.filter((e, index) => index % tracks.length === track.order);
+      {/* Timeline Canvas */}
+      <div className="flex-1 overflow-auto" ref={scrollContainerRef}>
+        <div className="relative min-h-full" style={{ width: timelineWidth + TRACK_HEADER_WIDTH }}>
+          {/* Ruler */}
+          <div className="sticky top-0 z-20 h-10 bg-card/80 backdrop-blur border-b border-border flex items-center" style={{ marginLeft: TRACK_HEADER_WIDTH }}>
+            {Array.from({ length: Math.ceil(timelineWidth / (EVENT_WIDTH_BASE * zoom)) + 1 }, (_, i) => (
+              <div 
+                key={i} 
+                className="absolute border-l border-border flex items-end pb-1 pl-1"
+                style={{ left: i * EVENT_WIDTH_BASE * zoom }}
+              >
+                <span className="text-xs text-muted-foreground">{i + 1}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Tracks */}
+          <div className="relative">
+            {tracks.map((track, trackIndex) => {
+              const trackEvents = events.filter(e => e.trackId === track.id && !e.parentEventId);
               
               return (
-                <GlassCard key={track.id} className="overflow-hidden">
+                <div 
+                  key={track.id}
+                  className="flex border-b border-border"
+                  style={{ height: TRACK_HEIGHT }}
+                >
                   {/* Track Header */}
                   <div 
-                    className="flex items-center justify-between px-4 py-3 border-b border-border cursor-pointer"
-                    style={{ backgroundColor: track.color + '10' }}
-                    onClick={() => {
-                      setTracks(tracks.map(t => 
-                        t.id === track.id ? { ...t, isExpanded: !t.isExpanded } : t
-                      ));
-                    }}
->
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: track.color }}
-                      />
-                      <span className="font-semibold">{track.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        ({events.filter((_, i) => i % tracks.length === track.order).length} events)
-                      </span>
+                    className="sticky left-0 z-10 w-[180px] bg-card/90 backdrop-blur p-4 border-r border-border flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: track.color }}
+                        />
+                        <span className="font-semibold text-sm">{track.name}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{trackEvents.length} events</span>
                     </div>
-                    
-                     {track.isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </div>
-                  
-                  {/* Track Events */}
-                   {track.isExpanded && (
-                    <div className="divide-y divide-border">
-                      {events
-                        .filter((_, i) => i % tracks.length === track.order)
-                        .map((event, index) => (
-                        <div
-                          key={event.id}
-                          onClick={() => setSelectedEvent(event.id)}
-                          className={cn(
-                            "flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors",
-                            selectedEvent === event.id ? "bg-primary/5" : "hover:bg-accent/50"
-                          )}
-                        >
-                          {/* Order Number */}
-                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                            {event.order + 1}
+
+                  {/* Track Content */}
+                  <div className="flex-1 relative">
+                    {/* Grid lines */}
+                    {Array.from({ length: Math.ceil(timelineWidth / (EVENT_WIDTH_BASE * zoom)) }, (_, i) => (
+                      <div 
+                        key={i}
+                        className="absolute top-0 bottom-0 border-l border-border/30"
+                        style={{ left: i * EVENT_WIDTH_BASE * zoom }}
+                      />
+                    ))}
+
+                    {/* Events */}
+                    {trackEvents.map((event) => (
+                      <motion.div
+                        key={event.id}
+                        layoutId={event.id}
+                        className={cn(
+                          "absolute top-4 bottom-4 rounded-xl border-2 cursor-pointer transition-all overflow-hidden",
+                          selectedEvent === event.id 
+                            ? "border-primary ring-2 ring-primary/20 shadow-lg" 
+                            : "border-border hover:border-primary/50"
+                        )}
+                        style={{ 
+                          left: event.order * EVENT_WIDTH_BASE * zoom + 16,
+                          width: EVENT_WIDTH_BASE * zoom - 32,
+                          backgroundColor: event.color + '20',
+                        }}
+                        onClick={() => setSelectedEvent(event.id)}
+                      >
+                        {/* Status bar */}
+                        <div className={cn("h-1 w-full", getStatusColor(event.status))} />
+                        
+                        <div className="p-3 h-full flex flex-col">
+                          <div className="flex items-start justify-between mb-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {event.timestamp}
+                            </span>
+                            <GripVertical className="w-3 h-3 text-muted-foreground" />
                           </div>
                           
-                          {/* Color Indicator */}
-                          <div 
-                            className="w-1 h-12 rounded-full" 
-                            style={{ backgroundColor: event.color }}
-                          />
+                          <h3 className="font-semibold text-sm mb-1 line-clamp-1">{event.title}</h3>
+                          <p className="text-xs text-muted-foreground line-clamp-2 flex-1">{event.description}</p>
                           
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium truncate">{event.title}</span>
-                              
-                              <span className={cn(
-                                "text-xs px-2 py-0.5 rounded-full",
-                                event.status === 'completed' && "bg-green-500/20 text-green-600",
-                                event.status === 'in-progress' && "bg-blue-500/20 text-blue-600",
-                                event.status === 'planned' && "bg-gray-500/20 text-gray-600",
-                                event.status === 'cut' && "bg-red-500/20 text-red-600",
-                              )}>
-                                {event.status}
+                          {/* Links */}
+                          <div className="flex items-center gap-2 mt-2">
+                            {event.linkedSceneId && (
+                              <Film className="w-3 h-3 text-violet-500" title="Linked to Scene" />
+                            )}
+                            {event.linkedStoryNodeId && (
+                              <BookOpen className="w-3 h-3 text-pink-500" title="Linked to Story" />
+                            )}
+                            {event.linkedCharacters.length > 0 && (
+                              <span className="text-[10px] bg-accent px-1.5 py-0.5 rounded">
+                                {event.linkedCharacters.length} chars
                               </span>
-                            </div>
-                            
-                            <p className="text-sm text-muted-foreground truncate">{event.description}</p>
-                            
-                            <div className="flex items-center gap-3 mt-1">
-                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Calendar className="w-3 h-3" />
-                                {event.timestamp}
-                              </span>
-                              
-                               {event.linkedSceneId && (
-                                <span className="flex items-center gap-1 text-xs text-violet-500">
-                                  <Film className="w-3 h-3" />
-                                  Linked Scene
-                                </span>
-                              )}
-                              
-                               {event.linkedStoryNodeId && (
-                                <span className="flex items-center gap-1 text-xs text-pink-500">
-                                  <BookOpen className="w-3 h-3" />
-                                  Linked Story
-                                </span>
-                              )}
-                              
-                               {event.tags.map(tag => (
-                                <span key={tag} className="text-xs text-muted-foreground">
-                                  #{tag}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          {/* Actions */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                moveEvent(event.id, 'up');
-                              }}
-                              disabled={index === 0}
-                              className="p-1.5 hover:bg-accent rounded disabled:opacity-50"
-                            >
-                              <ChevronUp className="w-4 h-4" />
-                            </button>
-                            
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                moveEvent(event.id, 'down');
-                              }}
-                              disabled={index === events.length - 1}
-                              className="p-1.5 hover:bg-accent rounded disabled:opacity-50"
-                            >
-                              <ChevronDown className="w-4 h-4" />
-                            </button>
-                            
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteEvent(event.id);
-                              }}
-                              className="p-1.5 hover:text-destructive rounded"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            )}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </GlassCard>
+                      </motion.div>
+                    ))}
+
+                    {/* Empty state */}
+                    {trackEvents.length === 0 && (
+                      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
+                        No events in this track
+                      </div>
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
       </div>
 
-      {/* Event Details Panel */}
-       {selectedEventData && (
-        <motion.div
-          initial={{ x: 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="w-96 border-l border-border bg-card/50 backdrop-blur p-6 overflow-y-auto"
-        >
-          <h2 className="text-xl font-bold mb-6">Event Details</h2>
-          
-          <div className="space-y-6">
-            {/* Title */}
-            <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
-              <input
-                type="text"
-                value={selectedEventData.title}
-                onChange={(e) => {
-                  setEvents(events.map(ev => 
-                    ev.id === selectedEvent ? { ...ev, title: e.target.value } : ev
-                  ));
-                }}
-                className="w-full px-3 py-2 bg-background border border-input rounded-lg"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
-              <textarea
-                value={selectedEventData.description}
-                onChange={(e) => {
-                  setEvents(events.map(ev => 
-                    ev.id === selectedEvent ? { ...ev, description: e.target.value } : ev
-                  ));
-                }}
-                rows={4}
-                className="w-full px-3 py-2 bg-background border border-input rounded-lg resize-none"
-              />
-            </div>
-
-            {/* Timestamp */}
-            <div>
-              <label className="text-sm font-medium mb-1 block">When</label>
-              <input
-                type="text"
-                value={selectedEventData.timestamp}
-                onChange={(e) => {
-                  setEvents(events.map(ev => 
-                    ev.id === selectedEvent ? { ...ev, timestamp: e.target.value } : ev
-                  ));
-                }}
-                placeholder="e.g., Day 1, Chapter 3, Year 847"
-                className="w-full px-3 py-2 bg-background border border-input rounded-lg"
-              />
-            </div>
-
-            {/* Color */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Color</label>
-              <div className="flex flex-wrap gap-2">
-                {colorOptions.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => {
+      {/* Selected Event Panel */}
+      <AnimatePresence>
+        {selectedEventData && (
+          <motion.div
+            initial={{ y: 300 }}
+            animate={{ y: 0 }}
+            exit={{ y: 300 }}
+            className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-2xl z-50"
+          >
+            <div className="p-6 max-w-6xl mx-auto">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    value={selectedEventData.title}
+                    onChange={(e) => {
                       setEvents(events.map(ev => 
-                        ev.id === selectedEvent ? { ...ev, color } : ev
+                        ev.id === selectedEvent ? { ...ev, title: e.target.value } : ev
                       ));
                     }}
-                    className={cn(
-                      "w-8 h-8 rounded-lg transition-all",
-                      selectedEventData.color === color && "ring-2 ring-white scale-110"
-                    )}
-                    style={{ backgroundColor: color }}
+                    className="text-xl font-bold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-ring rounded px-2"
                   />
-                ))}
-              </div>
-            </div>
-
-            {/* Status */}
-            <div>
-              <label className="text-sm font-medium mb-1 block">Status</label>
-              <select
-                value={selectedEventData.status}
-                onChange={(e) => {
-                  setEvents(events.map(ev => 
-                    ev.id === selectedEvent ? { ...ev, status: e.target.value as any } : ev
-                  ));
-                }}
-                className="w-full px-3 py-2 bg-background border border-input rounded-lg"
-              >
-                <option value="planned">Planned</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cut">Cut</option>
-              </select>
-            </div>
-
-            {/* Links */}
-            <div className="pt-4 border-t border-border">
-              <div className="text-sm font-medium mb-3">Links</div>
-              
-              <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
->
-                  <Film className="w-5 h-5 text-violet-500" />
-                  <div className="text-left">
-                    <div className="font-medium">Link to Scene</div>
-                    <div className="text-xs text-muted-foreground">{selectedEventData.linkedSceneId ? 'Linked' : 'Not linked'}</div>
-                  </div>
-                </button>
-                
-                <button className="w-full flex items-center gap-3 p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
->
-                  <BookOpen className="w-5 h-5 text-pink-500" />
-                  <div className="text-left">
-                    <div className="font-medium">Link to Story Node</div>
-                    <div className="text-xs text-muted-foreground">{selectedEventData.linkedStoryNodeId ? 'Linked' : 'Not linked'}</div>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Characters */}
-            <div className="pt-4 border-t border-border"
->
-              <div className="text-sm font-medium mb-3">Involved Characters</div>
-              
-              <div className="flex flex-wrap gap-2">
-                 {characters.map((char) => (
-                  <button
-                    key={char.id}
-                    onClick={() => {
-                      const isLinked = selectedEventData.linkedCharacters.includes(char.id);
+                  <select
+                    value={selectedEventData.status}
+                    onChange={(e) => {
                       setEvents(events.map(ev => 
-                        ev.id === selectedEvent 
-                          ? { 
-                              ...ev, 
-                              linkedCharacters: isLinked
-                                ? ev.linkedCharacters.filter(id => id !== char.id)
-                                : [...ev.linkedCharacters, char.id]
-                            }
-                          : ev
+                        ev.id === selectedEvent ? { ...ev, status: e.target.value as any } : ev
                       ));
                     }}
-                    className={cn(
-                      "px-3 py-1.5 rounded-lg text-sm transition-colors",
-                      selectedEventData.linkedCharacters.includes(char.id)
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-accent hover:bg-accent/80"
-                    )}
+                    className="px-2 py-1 bg-accent rounded text-sm"
                   >
-                    {char.name}
+                    <option value="planned">Planned</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cut">Cut</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => moveEvent(selectedEvent!, 'left')}
+                    className="p-2 hover:bg-accent rounded"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
-                ))}
+                  <span className="text-sm text-muted-foreground">Order: {selectedEventData.order + 1}</span>
+                  <button
+                    onClick={() => moveEvent(selectedEvent!, 'right')}
+                    className="p-2 hover:bg-accent rounded"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => deleteEvent(selectedEvent!)}
+                    className="p-2 hover:text-destructive rounded ml-4"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="px-4 py-2 hover:bg-accent rounded"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-6">
+                <div className="col-span-2 space-y-4">
+                  <textarea
+                    value={selectedEventData.description}
+                    onChange={(e) => {
+                      setEvents(events.map(ev => 
+                        ev.id === selectedEvent ? { ...ev, description: e.target.value } : ev
+                      ));
+                    }}
+                    placeholder="Event description..."
+                    rows={4}
+                    className="w-full px-3 py-2 bg-muted rounded-lg resize-none"
+                  />
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        value={selectedEventData.timestamp}
+                        onChange={(e) => {
+                          setEvents(events.map(ev => 
+                            ev.id === selectedEvent ? { ...ev, timestamp: e.target.value } : ev
+                          ));
+                        }}
+                        placeholder="When (e.g., Day 1)"
+                        className="px-2 py-1 bg-muted rounded text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Links</label>
+                    <div className="space-y-2">
+                      <button className="w-full flex items-center gap-2 p-2 bg-accent rounded-lg text-sm hover:bg-accent/80">
+                        <Film className="w-4 h-4" />
+                        {selectedEventData.linkedSceneId ? 'Linked to Scene' : 'Link to Scene'}
+                      </button>
+                      <button className="w-full flex items-center gap-2 p-2 bg-accent rounded-lg text-sm hover:bg-accent/80">
+                        <BookOpen className="w-4 h-4" />
+                        {selectedEventData.linkedStoryNodeId ? 'Linked to Story' : 'Link to Story'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Characters</label>
+                    <div className="flex flex-wrap gap-1">
+                      {characters.map(char => (
+                        <button
+                          key={char.id}
+                          onClick={() => {
+                            const isLinked = selectedEventData.linkedCharacters.includes(char.id);
+                            setEvents(events.map(ev => 
+                              ev.id === selectedEvent 
+                                ? { 
+                                    ...ev, 
+                                    linkedCharacters: isLinked
+                                      ? ev.linkedCharacters.filter(id => id !== char.id)
+                                      : [...ev.linkedCharacters, char.id]
+                                  }
+                                : ev
+                            ));
+                          }}
+                          className={cn(
+                            "px-2 py-1 rounded text-xs transition-colors",
+                            selectedEventData.linkedCharacters.includes(char.id)
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-accent hover:bg-accent/80"
+                          )}
+                        >
+                          {char.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Add Event Modal */}
-       {isAddingEvent && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
->
+      {isAdding && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <GlassCard className="w-full max-w-md p-6">
             <h3 className="text-xl font-bold mb-4">Add New Event</h3>
-            
             <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Event title"
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg"
+                className="w-full px-4 py-2 bg-background border border-input rounded-lg"
               />
-              
               <textarea
                 placeholder="Description"
                 value={newEvent.description}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg resize-none"
+                className="w-full px-4 py-2 bg-background border border-input rounded-lg resize-none"
               />
-              
-              <input
-                type="text"
-                placeholder="When (e.g., Day 1, Chapter 3)"
-                value={newEvent.timestamp}
-                onChange={(e) => setNewEvent({ ...newEvent, timestamp: e.target.value })}
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg"
-              />
-              
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="When (e.g., Day 1)"
+                  value={newEvent.timestamp}
+                  onChange={(e) => setNewEvent({ ...newEvent, timestamp: e.target.value })}
+                  className="flex-1 px-4 py-2 bg-background border border-input rounded-lg"
+                />
+                <select
+                  value={newEvent.trackId}
+                  onChange={(e) => setNewEvent({ ...newEvent, trackId: e.target.value })}
+                  className="px-4 py-2 bg-background border border-input rounded-lg"
+                >
+                  {tracks.map(track => (
+                    <option key={track.id} value={track.id}>{track.name}</option>
+                  ))}
+                </select>
+              </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setIsAddingEvent(false)}
+                  onClick={() => setIsAdding(false)}
                   className="flex-1 py-2 bg-accent rounded-lg hover:bg-accent/80"
                 >
                   Cancel
                 </button>
-                
                 <button
                   onClick={addEvent}
                   className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
