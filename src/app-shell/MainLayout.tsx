@@ -3,6 +3,7 @@ import { Sidebar } from './Sidebar';
 import { useUIStore } from '../stores/storyStore';
 import { cn } from '../lib/utils';
 import { CommandPalette, useCommandPalette } from '../components/CommandPalette';
+import { KeyboardShortcuts, useKeyboardShortcuts } from '../components/KeyboardShortcuts';
 import { useParams } from 'react-router-dom';
 
 interface MainLayoutProps {
@@ -11,7 +12,8 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const { sidebarOpen, sidebarWidth } = useUIStore();
-  const { isOpen, setIsOpen } = useCommandPalette();
+  const { isOpen: isCommandOpen, setIsOpen: setCommandOpen } = useCommandPalette();
+  const { isOpen: isShortcutsOpen, setIsOpen: setShortcutsOpen } = useKeyboardShortcuts();
   const { id: storyId } = useParams();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -40,9 +42,14 @@ export function MainLayout({ children }: MainLayoutProps) {
       </main>
 
       <CommandPalette 
-        isOpen={isOpen} 
-        onClose={() => setIsOpen(false)}
+        isOpen={isCommandOpen} 
+        onClose={() => setCommandOpen(false)}
         storyId={storyId}
+      />
+
+      <KeyboardShortcuts
+        isOpen={isShortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
       />
     </div>
   );
