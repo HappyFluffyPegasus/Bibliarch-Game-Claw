@@ -1,0 +1,132 @@
+/* Landscape-first mobile design */
+@media (max-width: 1024px) and (orientation: portrait) {
+  /* Force landscape message */
+  body::before {
+    content: "Rotate your device for the best experience";
+    position: fixed;
+    inset: 0;
+    background: hsl(var(--background));
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+/* Landscape phone optimizations */
+@media (max-width: 1024px) and (orientation: landscape) {
+  /* Sidebar becomes horizontal bottom bar */
+  .sidebar-desktop {
+    display: none;
+  }
+  
+  /* Main content fills screen */
+  main {
+    margin-left: 0 !important;
+    padding-bottom: 64px;
+  }
+  
+  /* Mobile nav bar at bottom */
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: hsl(var(--card));
+    border-top: 1px solid hsl(var(--border));
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 1rem;
+    z-index: 50;
+  }
+  
+  /* Story cards horizontal scroll */
+  .story-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .story-card {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+  }
+  
+  /* Canvas controls optimized for thumbs */
+  .canvas-toolbar {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  
+  .canvas-toolbar button {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  
+  /* 3D viewports full screen with floating controls */
+  .viewport-container {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+  
+  .viewport-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Modals full screen on landscape phone */
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+  }
+}
+
+/* Small landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobile-nav {
+    height: 48px;
+  }
+  
+  main {
+    padding-bottom: 48px;
+  }
+}
+
+/* Touch optimizations */
+@media (pointer: coarse) {
+  /* Larger touch targets */
+  button, a, input, select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* No hover effects on touch */
+  .hover\:scale-102:hover {
+    transform: none;
+  }
+  
+  /* Swipe gestures */
+  .swipeable {
+    touch-action: pan-y pinch-zoom;
+  }
+}

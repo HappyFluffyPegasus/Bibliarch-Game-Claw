@@ -12,11 +12,13 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  FileText
 } from 'lucide-react';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: Home, path: '' },
+  { id: 'story', label: 'Story', icon: FileText, path: '/story' },
   { id: 'notes', label: 'Notes', icon: BookOpen, path: '/notes' },
   { id: 'characters', label: 'Characters', icon: Users, path: '/characters' },
   { id: 'world', label: 'World', icon: Map, path: '/world' },

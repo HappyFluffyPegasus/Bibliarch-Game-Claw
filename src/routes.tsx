@@ -6,6 +6,7 @@ import { CharacterCreatorPage } from './character-creator/CharacterCreatorPage';
 import { SceneEditorPage } from './scene-editor/SceneEditorPage';
 import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
 import { TimelinePage } from './timeline/TimelinePage';
+import { StoryModePage } from './story-mode/StoryModePage';
 import { MainLayout } from './app-shell/MainLayout';
 
 export function AppRoutes() {
@@ -18,6 +19,7 @@ export function AppRoutes() {
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelinePage /></MainLayout>} />
+      <Route path="/story/:id/story" element={<MainLayout><StoryModePage /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

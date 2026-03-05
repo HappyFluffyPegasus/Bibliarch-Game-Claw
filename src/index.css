@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Landscape-first mobile design */
+@import './mobile-landscape.css';
+
 @layer base {
   :root {
     --background: 222.2 84% 4.9%;
