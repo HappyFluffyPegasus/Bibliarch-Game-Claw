@@ -3,6 +3,7 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes';
 import './index.css';
 import { SplashScreen } from './components/LoadingScreen';
+import { Onboarding } from './components/Onboarding';
 import { AnimatePresence } from 'framer-motion';
 
 // Auto-save on route change
@@ -19,6 +20,17 @@ function RouteChangeHandler() {
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!showSplash) {
+      // Check if user has seen onboarding
+      const hasCompleted = localStorage.getItem('bibliarch-onboarding-complete');
+      if (!hasCompleted) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [showSplash]);
 
   return (
     <>
@@ -27,12 +39,18 @@ function App() {
       )}
       
       {!showSplash && (
-        <BrowserRouter>
-          <RouteChangeHandler />
-          <AnimatePresence mode="wait">
-            <AppRoutes />
-          </AnimatePresence>
-        </BrowserRouter>
+        <>
+          <BrowserRouter>
+            <RouteChangeHandler />
+            <AnimatePresence mode="wait">
+              <AppRoutes />
+            </AnimatePresence>
+          </BrowserRouter>
+          
+          {showOnboarding && (
+            <Onboarding onComplete={() => setShowOnboarding(false)} />
+          )}
+        </>
       )}
     </>
   );
