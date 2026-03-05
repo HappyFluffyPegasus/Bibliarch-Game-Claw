@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Trophy, BookOpen, Users, Video, Map, Sparkles, Target, Zap } from 'lucide-react';
-import { GlassCard } from '../components/GlassCard';
+import { useState } from 'react';
+import { Trophy, BookOpen, Users, Video, Map, Sparkles, Zap } from 'lucide-react';
+import { GlassCard } from './GlassCard';
 import { cn } from '../lib/utils';
 
 interface Achievement {
@@ -157,10 +157,9 @@ export function AchievementsPanel() {
                   backgroundColor: achievement.unlocked ? achievement.color + '30' : '#374151',
                 }}
               >
-                <Icon 
-                  className="w-5 h-5"
-                  style={{ color: achievement.unlocked ? achievement.color : '#9ca3af' }}
-                />
+                <div style={{ color: achievement.unlocked ? achievement.color : '#9ca3af' }}>
+                  <Icon className="w-5 h-5" />
+                </div>
               </div>
 
               <div className="flex-1">

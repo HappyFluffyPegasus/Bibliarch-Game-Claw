@@ -56,6 +56,7 @@ export interface CanvasNode {
   linkedCanvasId?: string;
   parentId?: string;
   childIds?: string[];
+  hasArrow?: boolean;
   typeData?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;

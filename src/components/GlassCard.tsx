@@ -1,29 +1,30 @@
 import { ReactNode } from 'react';
-import { cn } from './utils';
+import { cn } from '../lib/utils';
 
 interface GlassCardProps {
   children: ReactNode;
   className?: string;
   hover?: boolean;
   glow?: boolean;
+  onClick?: () => void;
 }
 
-export function GlassCard({ children, className, hover = false, glow = false }: GlassCardProps) {
+export function GlassCard({ children, className, hover = false, glow = false, onClick }: GlassCardProps) {
   return (
     <div
+      onClick={onClick}
       className={cn(
         "relative rounded-xl overflow-hidden",
         "bg-card/80 backdrop-blur-xl",
         "border border-border/50",
         "shadow-lg",
+        onClick && "cursor-pointer",
         hover && "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/30",
         glow && "shadow-primary/20",
         className
       )}
     >
-      {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      
       <div className="relative z-10">{children}</div>
     </div>
   );
