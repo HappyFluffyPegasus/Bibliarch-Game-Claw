@@ -3,7 +3,7 @@ import { DashboardPage } from '../dashboard/DashboardPage';
 import { StoryOverviewPage } from '../dashboard/StoryOverviewPage';
 import { CanvasPage } from '../canvas/CanvasPage';
 import { CharacterCreatorPage } from '../character-creator/CharacterCreatorPage';
-import { TimelinePage } from '../timeline/TimelinePage';
+import { SceneEditorPage } from '../scene-editor/SceneEditorPage';
 import { WorldBuilderPage } from '../world-builder/WorldBuilderPage';
 import { MainLayout } from './MainLayout';
 
