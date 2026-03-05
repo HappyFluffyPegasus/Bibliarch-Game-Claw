@@ -1,8 +1,2 @@
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite"
-}
+# Force Vercel to use fresh build
+buildCommand: npm install && npm run build
