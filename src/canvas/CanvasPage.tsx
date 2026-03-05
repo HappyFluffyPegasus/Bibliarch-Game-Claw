@@ -18,7 +18,7 @@ interface CanvasNodeExtended {
   id: string;
   storyId: string;
   canvasId: string;
-  type: 'text' | 'character' | 'event' | 'location' | 'folder' | 'image' | 'table';
+  type: 'text' | 'character' | 'location' | 'folder' | 'image' | 'table' | 'note' | 'link';
   x: number;
   y: number;
   width: number;
@@ -233,7 +233,7 @@ export function CanvasPage() {
           // Create linked canvas for folder types
           const linkedCanvas = createCanvas(
             activeTool === 'character' ? 'Character Notes' : 
-            activeTool === 'event' ? 'Event Notes' : 'Folder',
+            activeTool === 'location' ? 'Location Notes' : 'Folder',
             currentCanvas?.id
           );
           updateNode(newNode.id, { 

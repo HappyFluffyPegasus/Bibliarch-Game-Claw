@@ -180,11 +180,8 @@ export function TimelineSystemPage() {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-6">
             {tracks.map((track) => {
-              const trackEvents = events.filter(e => {
-                // For now, color matching determines track
-                // In real app, events would have trackId
-                return trackEvents.length >= 0; // Placeholder
-              }) || events; // Show all events for now
+              // Filter events by track - for now using color or showing all
+              const trackEvents = events.filter((e, index) => index % tracks.length === track.order);
               
               return (
                 <GlassCard key={track.id} className="overflow-hidden">
