@@ -34,9 +34,9 @@ export interface Canvas {
 }
 
 export type CanvasNodeType =
-  | 'text' | 'character' | 'event' | 'location' | 'folder'
+  | 'text' | 'character' | 'location' | 'folder'
   | 'list' | 'image' | 'table' | 'relationship-canvas'
-  | 'line' | 'compact-text' | 'document';  // #1 - added 'document'
+  | 'line' | 'compact-text' | 'document' | 'note' | 'board' | 'arrow' | 'link' | 'video' | 'audio';
 
 export interface CanvasNode {
   id: string;

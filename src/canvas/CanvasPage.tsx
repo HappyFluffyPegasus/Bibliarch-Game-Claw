@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import { useStoryStore } from '../stores/storyStore';
 import { cn } from '../lib/utils';
 import { 
-  MousePointer2, Hand, Type, User, Calendar, MapPin, Folder, 
-  Image as ImageIcon, Table, ChevronRight, ArrowRight, Plus
+  MousePointer2, Hand, Type, User, MapPin, Folder, 
+  Image as ImageIcon, Table, ChevronRight, ArrowRight, Plus,
+  StickyNote, Link
 } from 'lucide-react';
 
 interface Viewport {
@@ -38,11 +39,12 @@ const tools = [
   { id: 'pan', icon: Hand, label: 'Pan (Space)' },
   { id: 'text', icon: Type, label: 'Text (T)' },
   { id: 'character', icon: User, label: 'Character (C)' },
-  { id: 'event', icon: Calendar, label: 'Event (E)' },
   { id: 'location', icon: MapPin, label: 'Location (L)' },
   { id: 'folder', icon: Folder, label: 'Folder (F)' },
   { id: 'image', icon: ImageIcon, label: 'Image (I)' },
   { id: 'table', icon: Table, label: 'Table (Tab)' },
+  { id: 'note', icon: StickyNote, label: 'Note (N)' },
+  { id: 'link', icon: Link, label: 'Link (U)' },
 ];
 
 // Breadcrumb for navigation
@@ -218,8 +220,8 @@ export function CanvasPage() {
         
         const canvasPos = screenToCanvas(e.clientX - rect.left, e.clientY - rect.top);
         
-        // Folder nodes (character, event, folder) get arrows and linkedCanvas
-        const isFolderType = ['character', 'event', 'folder'].includes(activeTool);
+        // Folder nodes (character, location, folder) get arrows and linkedCanvas
+        const isFolderType = ['character', 'location', 'folder'].includes(activeTool);
         const newNode = createNode(
           currentCanvas!.id,
           activeTool as any,
@@ -311,10 +313,11 @@ export function CanvasPage() {
         case ' ': setActiveTool('pan'); break;
         case 't': setActiveTool('text'); break;
         case 'c': setActiveTool('character'); break;
-        case 'e': setActiveTool('event'); break;
         case 'l': setActiveTool('location'); break;
         case 'f': setActiveTool('folder'); break;
         case 'i': setActiveTool('image'); break;
+        case 'n': setActiveTool('note'); break;
+        case 'u': setActiveTool('link'); break;
       }
     }
   };
