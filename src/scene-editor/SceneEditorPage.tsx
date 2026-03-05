@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoryStore } from '../stores/storyStore';
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, DirectionalLight, MeshBuilder, StandardMaterial, Color3, Mesh, TransformNode, Animation, AnimationGroup, PointerEventTypes, Axis, Space, Tools } from '@babylonjs/core';
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, DirectionalLight, MeshBuilder, StandardMaterial, Color3, Color4, Mesh, TransformNode, Animation, AnimationGroup, PointerEventTypes, Axis, Space, Tools } from '@babylonjs/core';
 import { GlassCard } from '../components/GlassCard';
 import { cn } from '../lib/utils';
 import { 

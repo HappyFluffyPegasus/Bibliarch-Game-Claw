@@ -257,7 +257,7 @@ export function WorldBuilderPage() {
 
       {/* 3D Viewport */}
       <div className="flex-1 relative"
-003e
+>
         <canvas
           ref={canvasRef}
           className="w-full h-full outline-none"

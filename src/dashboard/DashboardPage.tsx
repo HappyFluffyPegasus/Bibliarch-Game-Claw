@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db, generateId, type Story } from '../db/database';
 import { Plus, BookOpen, Trash2, Sparkles, Search, Clock, Users, Map } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -9,15 +8,24 @@ import { AIAssistant } from '../components/AIAssistant';
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const stories = useLiveQuery(() => 
-    db.stories.orderBy('updatedAt').reverse().toArray()
-  ) || [];
-  
+  const [stories, setStories] = useState<Story[]>([]);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [storyToDelete, setStoryToDelete] = useState<Story | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  useEffect(() => {
+    const loadStories = async () => {
+      const allStories = await db.stories.orderBy('updatedAt').reverse().toArray();
+      setStories(allStories);
+    };
+    loadStories();
+    
+    // Refresh every 5 seconds
+    const interval = setInterval(loadStories, 5000);
+    return () => clearInterval(interval);
+  }, []);
   
   const filteredStories = stories.filter(s => 
     s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
