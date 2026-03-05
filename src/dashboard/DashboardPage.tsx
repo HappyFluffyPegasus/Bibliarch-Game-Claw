@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db, generateId, type Story } from '../db/database';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, BookOpen, Trash2, Upload } from 'lucide-react';
