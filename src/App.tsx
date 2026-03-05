@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes';
 import './index.css';
-import { SplashScreen, LoadingScreen } from './components/LoadingScreen';
+import { SplashScreen } from './components/LoadingScreen';
+import { AnimatePresence } from 'framer-motion';
 
 // Auto-save on route change
 function RouteChangeHandler() {
@@ -18,19 +19,22 @@ function RouteChangeHandler() {
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <BrowserRouter>
-      {showSplash ? (
+    <>
+      {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} />
-      ) : (
-        <LoadingScreen isLoading={isLoading}>
-          <RouteChangeHandler />
-          <AppRoutes />
-        </LoadingScreen>
       )}
-    </BrowserRouter>
+      
+      {!showSplash && (
+        <BrowserRouter>
+          <RouteChangeHandler />
+          <AnimatePresence mode="wait">
+            <AppRoutes />
+          </AnimatePresence>
+        </BrowserRouter>
+      )}
+    </>
   );
 }
 
