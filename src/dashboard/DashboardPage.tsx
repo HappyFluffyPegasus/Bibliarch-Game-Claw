@@ -158,7 +158,7 @@ export function DashboardPage() {
                 hover 
                 className="aspect-[4/5] cursor-pointer group relative overflow-hidden"
                 onClick={() => navigate(`/story/${story.id}`)}
-003e
+>
                 {story.coverImage ? (
                   <img
                     src={URL.createObjectURL(new Blob([story.coverImage]))}

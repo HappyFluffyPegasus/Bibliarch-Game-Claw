@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUIStore } from '../../stores/storyStore';
-import { cn } from '../../lib/utils';
+import { useUIStore } from '../stores/storyStore';
+import { cn } from '../lib/utils';
 import { 
   Menu, 
   Home, 

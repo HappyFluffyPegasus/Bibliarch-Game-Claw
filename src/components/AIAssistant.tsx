@@ -123,7 +123,7 @@ export function AIAssistant({ context }: AIAssistantProps) {
 
           {isGenerating && (
             <div className="absolute inset-0 bg-card/80 backdrop-blur flex items-center justify-center"
-003e
+>
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
                 <p className="text-sm text-muted-foreground">AI is thinking...</p>

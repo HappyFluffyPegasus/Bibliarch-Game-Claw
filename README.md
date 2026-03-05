@@ -1,142 +1,117 @@
-# Bibliarch - One-Shot Build Complete
+# Bibliarch Ultra ✨
 
-## Overview
+A next-generation storytelling platform where your worlds come alive. Built with React, TypeScript, Babylon.js, and love.
 
-A local-first desktop application for interactive story creation and world-building, built from 46 GitHub issues in a one-shot implementation.
+## 🌟 What Makes It Special
 
-## Tech Stack
+### AI-Powered Creativity
+- **AI Writing Assistant** - Get unstuck with AI-generated backstories, dialogue, and plot twists
+- **Smart Suggestions** - Context-aware help that understands your story
 
-| Layer | Technology |
-|-------|-----------|
-| Language | TypeScript |
-| 3D Engine | Babylon.js |
-| UI | React 19 + Tailwind CSS + Radix UI |
-| State | Zustand |
-| Persistence | Dexie.js (IndexedDB) |
-| Desktop | Tauri 2.x |
-| Dev Environment | Docker |
+### Stunning Visual Design
+- **Glassmorphism UI** - Modern translucent interfaces with beautiful gradients
+- **Smooth Animations** - Every interaction feels polished and responsive
+- **Dark Theme** - Easy on the eyes for those late-night writing sessions
 
-## What's Implemented
+### 3D Character Creator
+- **Real-time 3D Preview** - See your characters come alive with Babylon.js
+- **Toon Shading** - Beautiful cel-shaded rendering style
+- **Asset Customization** - Toggle clothing, accessories, and colors
 
-### Foundation (Issues #47, #38, #39, #40)
-- ✅ Docker dev container with Node.js 22, Rust, Tauri CLI
-- ✅ Complete project scaffolding
-- ✅ README.md, AGENTS.md
-- ✅ Dexie.js database with 11 tables
-- ✅ TypeScript interfaces for all data models
-- ✅ Write-through persistence layer
+### Infinite Canvas
+- **Node-based Notes** - Freeform canvas for brainstorming and planning
+- **Multiple Node Types** - Text, characters, events, locations, images, tables
+- **Pan & Zoom** - Navigate your ideas seamlessly
 
-### App Shell (Issues #1, #2, #3, #4)
-- ✅ Dashboard with story CRUD
-- ✅ Responsive story card grid
-- ✅ Sidebar navigation with roving tabindex
-- ✅ Routing between all sections
-- ✅ Dark theme with HSL color utilities
-- ✅ Zustand stores with debounced persistence
+### Relationship Visualization
+- **Interactive Graph** - See how characters connect at a glance
+- **Color-coded Relationships** - Friends, enemies, romance, allies
+- **Dynamic Layout** - Automatically organized network view
 
-### Canvas System (Issues #5-#15)
-- ✅ Infinite 2D canvas with pan/zoom
-- ✅ Tool system (9 tools: select, pan, text, character, event, location, folder, image, table)
-- ✅ Node creation and selection
-- ✅ Multi-select with shift-click
-- ✅ Drag and drop
-- ✅ Grid rendering at all zoom levels
-- ✅ Basic text editing
-- ✅ Delete/keyboard shortcuts
+### Gamification
+- **Achievements** - Unlock badges as you build your story
+- **Progress Tracking** - Visual progress bars keep you motivated
+- **Writing Streaks** - Coming soon!
 
-### Character Creator (Issues #16-#18)
-- ✅ Character list with drag-sort
-- ✅ 3D viewport with Babylon.js
-- ✅ ArcRotateCamera with orbit controls
-- ✅ Appearance tab with asset toggles
-- ✅ Color customization panel
-- ✅ Profile editing (backstory, outlook, favorites)
-- ✅ Custom fields support
+## 🚀 Quick Start
 
-### Timeline (Issue #25)
-- ✅ Multi-track timeline layout
-- ✅ Track sidebar with color coding
-- ✅ Event list with filtering
-- ✅ Zoom controls (50%-200%)
-- ✅ Event creation structure
-
-### World Builder (Issues #26-#36)
-- ✅ Ribbon toolbar with 5 tabs
-- ✅ Terrain sculpting tools (Raise, Lower, Smooth, Flatten)
-- ✅ Brush controls (size 1-20, strength 0-1)
-- ✅ Dockable panels (Explorer, Properties, Output)
-- ✅ World hierarchy tree
-- ✅ 3D viewport with Babylon.js
-- ✅ Minimap overlay
-- ✅ Camera mode controls
-
-## Project Structure
-
-```
-src/
-  app-shell/
-    Sidebar.tsx           # Navigation sidebar
-    MainLayout.tsx        # Main layout wrapper
-  dashboard/
-    DashboardPage.tsx     # Story dashboard
-    StoryOverviewPage.tsx # Story section overview
-  canvas/
-    CanvasPage.tsx        # Infinite canvas
-  character-creator/
-    CharacterCreatorPage.tsx # 3D character editor
-  timeline/
-    TimelinePage.tsx      # Story timeline
-  world-builder/
-    WorldBuilderPage.tsx  # 3D world builder
-  components/
-    BabylonViewer.tsx     # Reusable 3D viewport
-  stores/
-    storyStore.ts         # Zustand stores
-  db/
-    database.ts           # Dexie schema
-    persistence.ts        # Write-through persistence
-  theme/
-    colors.ts             # HSL utilities
-  lib/
-    utils.ts              # Utilities
-```
-
-## Running the Project
-
-### With Docker (Recommended)
 ```bash
+# Clone and enter
+git clone <repo-url>
+cd bibliarch
+
+# Copy environment
+cp .env.example .env
+
+# Using Docker (recommended)
 docker compose up -d --build
 docker compose exec dev npm install
 docker compose exec dev npm run dev
-```
 
-### Locally
-```bash
-npm install --legacy-peer-deps
+# Or locally
+npm install
 npm run dev
 ```
 
-### Desktop Build
-```bash
-npm run tauri:dev    # Development
-npm run tauri:build  # Production
+Open http://localhost:1420
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + K` | Open Command Palette |
+| `Cmd/Ctrl + 1-5` | Navigate to Notes/Characters/World/Scenes/Timeline |
+| `Esc` | Close modals/panels |
+| `Delete` | Remove selected nodes |
+| `Space + Drag` | Pan canvas |
+| `Scroll` | Zoom canvas |
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, TypeScript, Vite |
+| 3D Engine | Babylon.js |
+| Styling | Tailwind CSS |
+| State | Zustand |
+| Database | Dexie.js (IndexedDB) |
+| Desktop | Tauri 2.x |
+| Icons | Lucide React |
+
+## 📁 Project Structure
+
+```
+src/
+  app-shell/       # Layout, Sidebar, Navigation
+  canvas/          # Infinite canvas with nodes
+  character-creator/ # 3D character tools
+  components/      # Shared UI components
+  dashboard/       # Story management
+  db/              # Database schema & persistence
+  stores/          # Zustand state management
+  theme/           # Colors, styling utilities
+  timeline/        # Story timeline
 ```
 
-## Next Steps (User Story Driven)
+## 🎯 Roadmap
 
-Now that the foundation is complete, development should shift to user-story-driven iteration:
+- [x] AI Writing Assistant
+- [x] Command Palette
+- [x] Glassmorphism UI
+- [x] 3D Character Creator
+- [x] Infinite Canvas
+- [x] Relationship Graph
+- [x] Achievements System
+- [ ] World Builder (3D Terrain)
+- [ ] Scene Editor with Keyframes
+- [ ] Cloud Sync
+- [ ] Export to PDF/Video
+- [ ] Mobile App
 
-1. **Test as a human** - Use the app, find friction points
-2. **Write user stories** - "As a user, I want to..."
-3. **Implement incrementally** - One story at a time
-4. **Commit atomically** - Clear commit messages per story
+## 📝 License
 
-See `USER_STORIES.md` for the backlog format.
+MIT - Build amazing stories!
 
-## GitHub Repository
+---
 
-https://github.com/HappyFluffyPegasus/Bibliarch-Game-Claw
-
-## License
-
-MIT
+*Built with passion by Alpha X 🤖*

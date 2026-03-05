@@ -1,12 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Story, Canvas, CanvasNode, Character, Scene, TimelineTrack, TimelineEvent, WorldNode } from '../db/database';
-import { loadStoryData, debouncedSaveStory, debouncedSaveCanvas, debouncedSaveNodes, debouncedSaveCharacter } from '../db/persistence';
+import { loadStoryData, debouncedSaveStory, debouncedSaveCanvas, debouncedSaveNode, debouncedSaveNodes, debouncedSaveCharacter } from '../db/persistence';
 
 interface StoryState {
   // Current story
   currentStory: Story | null;
   currentStoryId: string | null;
+  
+  // Current canvas for notes
+  currentCanvas: Canvas | null;
   
   // Story data
   canvases: Canvas[];
@@ -29,6 +32,8 @@ interface StoryState {
   deleteStory: (storyId: string) => Promise<void>;
   
   // Canvas actions
+  loadCanvas: (canvasId: string) => void;
+  setCurrentCanvas: (canvas: Canvas | null) => void;
   createCanvas: (name: string, parentCanvasId?: string) => Canvas;
   updateCanvas: (canvasId: string, updates: Partial<Canvas>) => void;
   
@@ -48,6 +53,7 @@ interface StoryState {
 export const useStoryStore = create<StoryState>()((set, get) => ({
   currentStory: null,
   currentStoryId: null,
+  currentCanvas: null,
   canvases: [],
   nodes: [],
   characters: [],
@@ -86,6 +92,7 @@ export const useStoryStore = create<StoryState>()((set, get) => ({
     set({
       currentStory: null,
       currentStoryId: null,
+      currentCanvas: null,
       canvases: [],
       nodes: [],
       characters: [],
@@ -95,6 +102,18 @@ export const useStoryStore = create<StoryState>()((set, get) => ({
       worldNodes: [],
       error: null
     });
+  },
+  
+  loadCanvas: (canvasId: string) => {
+    const { canvases } = get();
+    const canvas = canvases.find(c => c.id === canvasId);
+    if (canvas) {
+      set({ currentCanvas: canvas });
+    }
+  },
+  
+  setCurrentCanvas: (canvas) => {
+    set({ currentCanvas: canvas });
   },
   
   createStory: (title: string, description?: string) => {
@@ -131,7 +150,7 @@ export const useStoryStore = create<StoryState>()((set, get) => ({
   },
   
   createCanvas: (name: string, parentCanvasId?: string) => {
-    const { currentStoryId } = get();
+    const { currentStoryId, canvases } = get();
     if (!currentStoryId) throw new Error('No story loaded');
     const { generateId } = require('../db/database');
     const canvas: Canvas = {
@@ -161,6 +180,20 @@ export const useStoryStore = create<StoryState>()((set, get) => ({
     const { currentStoryId } = get();
     if (!currentStoryId) throw new Error('No story loaded');
     const { generateId } = require('../db/database');
+    
+    // Default sizes based on type
+    const sizes = {
+      text: { width: 200, height: 100 },
+      character: { width: 220, height: 80 },
+      event: { width: 220, height: 80 },
+      location: { width: 200, height: 80 },
+      folder: { width: 220, height: 80 },
+      image: { width: 200, height: 150 },
+      table: { width: 300, height: 200 }
+    };
+    
+    const size = sizes[type] || sizes.text;
+    
     const node: CanvasNode = {
       id: generateId(),
       storyId: currentStoryId,
@@ -168,8 +201,8 @@ export const useStoryStore = create<StoryState>()((set, get) => ({
       type,
       x,
       y,
-      width: type === 'text' ? 200 : 100,
-      height: type === 'text' ? 100 : 50,
+      width: size.width,
+      height: size.height,
       zIndex: get().nodes.filter(n => n.canvasId === canvasId).length,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

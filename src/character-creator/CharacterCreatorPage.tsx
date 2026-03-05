@@ -2,15 +2,48 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoryStore } from '../stores/storyStore';
 import { BabylonViewer } from '../components/BabylonViewer';
-import { Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, ChevronLeft, ChevronRight, Camera, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../lib/utils';
-import type { Character } from '../db/database';
+import { GlassCard } from '../components/GlassCard';
+
+// Asset categories for the 3D model
+const assetCategories = [
+  { id: 'hair', label: 'Hair', icon: '💇' },
+  { id: 'head', label: 'Head', icon: '👤' },
+  { id: 'top', label: 'Top', icon: '👕' },
+  { id: 'pants', label: 'Pants', icon: '👖' },
+  { id: 'shoes', label: 'Shoes', icon: '👟' },
+  { id: 'accessories', label: 'Accessories', icon: '💍' },
+];
+
+// Color presets
+const colorPresets = [
+  '#1a1a1a', '#4a3020', '#8b4513', '#d2691e', '#f4a460',
+  '#ffe4c4', '#ffdbac', '#f1c27d', '#e0ac69', '#8d5524',
+  '#c68642', '#e0ac69', '#ff0000', '#00ff00', '#0000ff',
+  '#ffff00', '#ff00ff', '#00ffff', '#800080', '#ffa500'
+];
+
+// Camera presets
+const cameraPresets = [
+  { id: 'face', label: 'Face', position: { alpha: -Math.PI/2, beta: Math.PI/2.2, radius: 1.5 } },
+  { id: 'upper', label: 'Upper', position: { alpha: -Math.PI/2, beta: Math.PI/2.5, radius: 2.5 } },
+  { id: 'full', label: 'Full', position: { alpha: -Math.PI/2, beta: Math.PI/3, radius: 4 } },
+  { id: 'feet', label: 'Feet', position: { alpha: -Math.PI/2, beta: Math.PI/1.8, radius: 2 } },
+];
 
 export function CharacterCreatorPage() {
   const { id } = useParams();
   const { currentStory, characters, loadStory, createCharacter, updateCharacter, deleteCharacter } = useStoryStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'appearance' | 'profile'>('appearance');
+  const [activeCategory, setActiveCategory] = useState('hair');
+  const [activeCamera, setActiveCamera] = useState('full');
+  const [visibleAssets, setVisibleAssets] = useState<Record<string, boolean>>({
+    hair: true, head: true, top: true, pants: true, shoes: true, accessories: true
+  });
+  const [assetColors, setAssetColors] = useState<Record<string, string>>({
+    hair: '#1a1a1a', skin: '#ffdbac', top: '#3b82f6', pants: '#1f2937', shoes: '#000000'
+  });
 
   useEffect(() => {
     if (id) loadStory(id);
@@ -23,33 +56,43 @@ export function CharacterCreatorPage() {
     setSelectedId(char.id);
   };
 
+  const toggleAsset = (category: string) => {
+    setVisibleAssets(prev => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const updateColor = (category: string, color: string) => {
+    setAssetColors(prev => ({ ...prev, [category]: color }));
+  };
+
   if (!currentStory) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="h-screen flex">
-      {/* Character List */}
-      <div className="w-72 border-r border-border bg-card flex flex-col">
+    <div className="h-screen flex bg-background">
+      {/* Character List - Slim Sidebar */}
+      <div className="w-64 border-r border-border bg-card/50 backdrop-blur flex flex-col">
         <div className="p-4 border-b border-border">
           <button
             onClick={handleCreate}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all"
           >
             <Plus className="w-4 h-4" />
             New Character
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-2">
           {characters.map((char) => (
             <button
               key={char.id}
               onClick={() => setSelectedId(char.id)}
               className={cn(
-                "w-full flex items-center gap-3 p-3 text-left hover:bg-accent transition-colors",
-                selectedId === char.id && "bg-primary/10 border-r-2 border-primary"
+                "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all",
+                selectedId === char.id 
+                  ? "bg-gradient-to-r from-violet-500/20 to-indigo-500/20 border border-violet-500/30" 
+                  : "hover:bg-accent/50"
               )}
             >
-              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white font-bold">
                 {char.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -62,7 +105,7 @@ export function CharacterCreatorPage() {
                   deleteCharacter(char.id);
                   if (selectedId === char.id) setSelectedId(null);
                 }}
-                className="p-1.5 hover:text-destructive opacity-0 group-hover:opacity-100"
+                className="p-1.5 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -71,163 +114,184 @@ export function CharacterCreatorPage() {
         </div>
       </div>
 
-      {/* Main Editor */}
-      <div className="flex-1 flex flex-col">
+      {/* Main 3D Viewport */}
+      <div className="flex-1 flex flex-col relative">
         {selectedChar ? (
           <>
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <input
-                type="text"
-                value={selectedChar.name}
-                onChange={(e) => updateCharacter(selectedChar.id, { name: e.target.value })}
-                className="text-2xl font-bold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-ring rounded px-2"
+            {/* 3D Viewer */}
+            <div className="flex-1 relative">
+              <BabylonViewer 
+                modelUrl="/models/Bibliarch Maybe.glb"
               />
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setActiveTab('appearance')}
-                  className={cn(
-                    "px-4 py-2 rounded-md transition-colors",
-                    activeTab === 'appearance' ? "bg-primary text-primary-foreground" : "hover:bg-accent"
-                  )}
-                
-003e
-                  Appearance
-                </button>
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className={cn(
-                    "px-4 py-2 rounded-md transition-colors",
-                    activeTab === 'profile' ? "bg-primary text-primary-foreground" : "hover:bg-accent"
-                  )}
-                
-003e
-                  Profile
-                </button>
-              </div>
+              
+              {/* Camera Controls Overlay */}
+              <GlassCard className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2">
+                <Camera className="w-4 h-4 text-muted-foreground ml-2" />
+                {cameraPresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => setActiveCamera(preset.id)}
+                    className={cn(
+                      "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                      activeCamera === preset.id
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent"
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </GlassCard>
+
+              {/* Height Scale */}
+              <GlassCard className="absolute right-6 top-6 p-3">
+                <div className="text-xs text-muted-foreground mb-2">Height</div>
+                <input
+                  type="range"
+                  min="0.8"
+                  max="1.2"
+                  step="0.01"
+                  defaultValue="1"
+                  className="w-32"
+                />
+              </GlassCard>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 flex overflow-hidden">
-              {activeTab === 'appearance' ? (
-                <>
-                  {/* 3D Viewer */}
-                  <div className="flex-1 relative">
-                    <BabylonViewer />
-                    
-                    <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur rounded-lg p-3 border border-border">
-                      <p className="text-xs text-muted-foreground mb-2">Camera Controls</p>
-                      <div className="flex gap-2">
-                        <button className="p-2 hover:bg-accent rounded" title="Face"><ChevronLeft className="w-4 h-4" /></button>
-                        <button className="p-2 hover:bg-accent rounded" title="Body">Body</button>
-                        <button className="p-2 hover:bg-accent rounded" title="Full">Full</button>
-                        <button className="p-2 hover:bg-accent rounded" title="Feet"><ChevronRight className="w-4 h-4" /></button>
-                      </div>
-                    </div>
+            {/* Customization Panel */}
+            <div className="h-72 border-t border-border bg-card/50 backdrop-blur flex">
+              {/* Asset Categories */}
+              <div className="w-48 border-r border-border p-4 overflow-y-auto">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  Assets
+                </div>
+                <div className="space-y-1">
+                  {assetCategories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all",
+                        activeCategory === cat.id
+                          ? "bg-primary/10 text-primary"
+                          : "hover:bg-accent"
+                      )}
+                    >
+                      <span>{cat.icon}</span>
+                      <span className="flex-1 text-left">{cat.label}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleAsset(cat.id);
+                        }}
+                        className="p-1 hover:bg-accent rounded"
+                      >
+                        {visibleAssets[cat.id] ? (
+                          <Eye className="w-3.5 h-3.5" />
+                        ) : (
+                          <EyeOff className="w-3.5 h-3.5 text-muted-foreground" />
+                        )}
+                      </button>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Palette */}
+              <div className="flex-1 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    {assetCategories.find(c => c.id === activeCategory)?.label} Color
                   </div>
+                  <input
+                    type="color"
+                    value={assetColors[activeCategory] || '#808080'}
+                    onChange={(e) => updateColor(activeCategory, e.target.value)}
+                    className="w-8 h-8 rounded cursor-pointer"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-10 gap-2">
+                  {colorPresets.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => updateColor(activeCategory, color)}
+                      className={cn(
+                        "w-8 h-8 rounded-lg border-2 transition-all",
+                        assetColors[activeCategory] === color
+                          ? "border-white scale-110 shadow-lg"
+                          : "border-transparent hover:scale-105"
+                      )}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
 
-                  {/* Customization Panel */}
-                  <div className="w-80 border-l border-border bg-card p-4 overflow-y-auto">
-                    <h3 className="font-semibold mb-4">Assets</h3>
-                    <div className="space-y-2">
-                      {['Hair', 'Head', 'Top', 'Pants', 'Shoes', 'Accessories'].map((category) => (
-                        <div key={category} className="p-3 border border-border rounded-lg">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{category}</span>
-                            <label className="flex items-center gap-2">
-                              <input type="checkbox" className="rounded" defaultChecked />
-                              <span className="text-sm">Visible</span>
-                            </label>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <h3 className="font-semibold mt-6 mb-4">Colors</h3>
-                    <div className="space-y-3">
-                      {['Skin', 'Hair', 'Eyes', 'Top', 'Pants', 'Shoes'].map((colorType) => (
-                        <div key={colorType} className="flex items-center justify-between">
-                          <span className="text-sm">{colorType}</span>
-                          <input
-                            type="color"
-                            defaultValue="#808080"
-                            className="w-12 h-8 rounded cursor-pointer"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                {/* Pose Presets */}
+                <div className="mt-6">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                    Pose
                   </div>
-                </>
-              ) : (
-                <div className="flex-1 p-8 overflow-y-auto">
-                  <div className="max-w-2xl space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Backstory</label>
-                      <textarea
-                        value={selectedChar.backstory}
-                        onChange={(e) => updateCharacter(selectedChar.id, { backstory: e.target.value })}
-                        placeholder="Character backstory..."
-                        rows={6}
-                        className="w-full px-3 py-2 bg-background border border-input rounded-md resize-none"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      {[
-                        { key: 'outlookOnLife', label: 'Outlook on Life' },
-                        { key: 'favoriteFood', label: 'Favorite Food' },
-                        { key: 'favoriteColor', label: 'Favorite Color' },
-                      ].map(({ key, label }) => (
-                        <div key={key}>
-                          <label className="block text-sm font-medium mb-2">{label}</label>
-                          <input
-                            type="text"
-                            value={(selectedChar as any)[key] || ''}
-                            onChange={(e) => updateCharacter(selectedChar.id, { [key]: e.target.value })}
-                            className="w-full px-3 py-2 bg-background border border-input rounded-md"
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Custom Fields</label>
-                      <div className="space-y-2">
-                        {Object.entries(selectedChar.customFields).map(([key, value]) => (
-                          <div key={key} className="flex gap-2">
-                            <input
-                              type="text"
-                              value={key}
-                              placeholder="Field name"
-                              className="flex-1 px-3 py-2 bg-background border border-input rounded-md"
-                            />
-                            <input
-                              type="text"
-                              value={value}
-                              placeholder="Value"
-                              className="flex-1 px-3 py-2 bg-background border border-input rounded-md"
-                            />
-                          </div>
-                        ))}
-                        <button
-                          onClick={() => {
-                            const newFields = { ...selectedChar.customFields, ['']: '' };
-                            updateCharacter(selectedChar.id, { customFields: newFields });
-                          }}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          + Add custom field
-                        </button>
-                      </div>
-                    </div>
+                  <div className="flex gap-2">
+                    {['Idle', 'Walk', 'Run', 'Jump', 'Sit', 'Wave'].map((pose) => (
+                      <button
+                        key={pose}
+                        className="px-4 py-2 rounded-lg bg-accent/50 hover:bg-accent text-sm transition-colors"
+                      >
+                        {pose}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Morph Targets / Face */}
+              <div className="w-64 border-l border-border p-4">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  Face Shape
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Eye Size', defaultValue: 50 },
+                    { label: 'Nose Width', defaultValue: 50 },
+                    { label: 'Mouth Width', defaultValue: 50 },
+                    { label: 'Face Width', defaultValue: 50 },
+                  ].map((slider) => (
+                    <div key={slider.label}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span>{slider.label}</span>
+                        <span className="text-muted-foreground">{slider.defaultValue}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        defaultValue={slider.defaultValue}
+                        className="w-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            Select or create a character to begin
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 flex items-center justify-center">
+                <Plus className="w-12 h-12 text-violet-500" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Create a Character</h2>
+              <p className="text-muted-foreground max-w-md">
+                Design unique characters with our 3D customizer. 
+                Adjust appearance, colors, and poses.
+              </p>
+              <button
+                onClick={handleCreate}
+                className="mt-6 px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+              >
+                Start Creating
+              </button>
+            </div>
           </div>
         )}
       </div>
