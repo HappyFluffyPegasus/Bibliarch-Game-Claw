@@ -1,113 +1,105 @@
-# Bibliarch Ultra ✨🎮
+# Bibliarch Ultra ✨
 
-> **Nintendo-level quality storytelling platform** - Where your worlds come alive in 3D
+**A next-generation storytelling platform where your worlds come alive.**
 
-![Version](https://img.shields.io/badge/version-1.0.0-violet)
-![React](https://img.shields.io/badge/React-19-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Babylon.js](https://img.shields.io/badge/Babylon.js-7.0-orange)
+Built in a 10-hour one-shot sprint with React, TypeScript, Babylon.js, and passion.
 
-## 🌟 What Makes It Special
+---
 
-### ✨ Nintendo-Level Polish
-- **Animated splash screen** with logo reveal and progress bar
-- **Smooth page transitions** - Every navigation feels delightful
-- **Glassmorphism UI** - Modern translucent interfaces
-- **Micro-interactions** - Hover effects, bounce animations, magnetic buttons
-- **Loading states** - Never wonder if something is happening
+## 🎮 Live Demo
 
-### 🤖 AI-Powered Creativity
+**Repository:** https://github.com/HappyFluffyPegasus/Bibliarch-Game-Claw
+
+---
+
+## ✨ What Makes It Special
+
+### 🎨 **Nintendo-Level UI/UX**
+- **Glassmorphism Design** - Beautiful translucent interfaces with depth
+- **Smooth Animations** - Page transitions, hover effects, loading screens
+- **Splash Screen** - Animated intro with spring physics
+- **Command Palette** - `Cmd+K` for lightning-fast navigation
+- **Keyboard Shortcuts** - Power-user friendly
+
+### 🤖 **AI-Powered Creativity**
 - **AI Writing Assistant** - Get unstuck with generated backstories, dialogue, plot twists
-- **Context-aware suggestions** - AI understands your story
+- **Context-Aware** - AI understands your story context
 
-### 🎨 3D Character Creator
-- **Real-time 3D preview** with Babylon.js
-- **Toon shading** - Beautiful cel-shaded rendering
-- **Asset customization** - Toggle clothing, hair, accessories
-- **Color palette** - 20+ presets + custom picker
-- **Camera presets** - Face, Upper body, Full, Feet
-- **Morph targets** - Face shape customization
-- **Pose presets** - Idle, Walk, Run, Jump, Sit, Wave
+### 🎭 **3D Character Creator**
+- **Real-time 3D Preview** - Babylon.js with toon shaders
+- **Asset Toggling** - Hair, clothing, accessories
+- **Color Customization** - 20+ presets + custom picker
+- **Camera Presets** - Face, Upper, Full, Feet views
+- **Morph Targets** - Face shape adjustments
+- **Pose Presets** - Idle, Walk, Run, Jump, Sit, Wave
 
-### 📝 Infinite Canvas (Notes)
-- **Node-based brainstorming** - Freeform canvas for ideas
-- **Folder hierarchy** - Character/Event/Folder notes with arrows to navigate
-- **Breadcrumb navigation** - Never get lost in nested canvases
-- **Multiple node types:**
-  - Text nodes with rich editing
-  - Character nodes (link to 3D creator)
-  - Event nodes
-  - Location nodes
-  - Folder nodes (with sub-canvases)
-  - Image nodes
-  - Table nodes
-- **Pan & zoom** - Navigate huge canvases
-- **Keyboard shortcuts** - Work fast with V/T/C/E/L/F/I keys
+### 🌍 **World Builder**
+- **Real-time Terrain Sculpting** - 5 brush types
+- **Material Painting** - Grass, Dirt, Rock, Sand, Snow, Water
+- **Sea Level Control** - Dynamic water plane
+- **Environment Settings** - Time of day, weather
+- **60fps Performance** - Optimized mesh updates
 
-### 🌍 World Builder
-- **Real-time terrain sculpting** - Raise, Lower, Flatten, Smooth, Noise brushes
-- **Material painting** - Grass, Dirt, Rock, Sand, Snow, Water
-- **Sea level control** - Adjust water plane
-- **Environment settings** - Time of day, weather
-- **3D viewport** with orbit camera
+### 🎬 **Scene Editor**
+- **3D Scene Viewport** - Place characters in real-time
+- **Click-to-Place** - Intuitive character positioning
+- **Timeline Scrubber** - Visual timeline with tracks
+- **Lighting Presets** - Day, Sunset, Night, Studio
+- **Camera Presets** - Wide, Medium, Close, Overhead
+- **Playback Controls** - Play, pause, scrub
 
-### 🎬 Scene Editor
-- **Character placement** - Click to place characters in 3D
-- **Timeline scrubber** - Frame-by-frame control
-- **Playback controls** - Play, Pause, Skip
-- **Lighting presets** - Day, Sunset, Night, Studio
-- **Camera presets** - Wide, Medium, Close-up, Overhead
-- **Export ready** - Video export structure in place
+### 📝 **Infinite Canvas (Notes)**
+- **Folder Node Hierarchy** - Character/Event/Folder nodes with arrows
+- **Breadcrumb Navigation** - Never get lost in nested canvases
+- **Multiple Node Types** - Text, Character, Event, Location, Folder, Image, Table
+- **Pan & Zoom** - Navigate seamlessly
+- **Tool Shortcuts** - V, T, C, E, L, F, I, Tab
 
-### 🏆 Gamification
-- **Achievements system** - Unlock badges as you create
-- **Progress tracking** - Visual progress bars
-- **Stats dashboard** - Story count, active projects
+### 🏆 **Gamification**
+- **Achievements** - 6 unlockable badges
+- **Progress Tracking** - Visual progress bars
+- **Story Stats** - Character count, activity tracking
 
-### ⌨️ Power User Features
-- **Command Palette** (Cmd+K) - Access everything instantly
-- **Keyboard shortcuts** - Vim-style navigation
-- **Glass cards** - Beautiful translucent UI components
-- **Relationship graph** - Visualize character connections
+---
 
 ## 🚀 Quick Start
 
 ```bash
-# Clone the repo
+# Clone
 git clone https://github.com/HappyFluffyPegasus/Bibliarch-Game-Claw.git
 cd Bibliarch-Game-Claw
 
-# Using Docker (recommended)
-docker compose up -d --build
-docker compose exec dev npm install
-docker compose exec dev npm run dev
+# Install dependencies
+npm install --legacy-peer-deps
 
-# Or locally
-npm install
+# Run dev server
 npm run dev
+
+# Open http://localhost:1420
 ```
 
-Open **http://localhost:1420** 🎉
+---
 
 ## ⌨️ Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
 | `Cmd/Ctrl + K` | Command Palette |
-| `Cmd/Ctrl + 1` | Notes |
-| `Cmd/Ctrl + 2` | Characters |
-| `Cmd/Ctrl + 3` | World |
-| `Cmd/Ctrl + 4` | Scenes |
-| `Cmd/Ctrl + 5` | Timeline |
-| `V` | Select tool |
-| `T` | Text tool |
-| `C` | Character tool |
-| `E` | Event tool |
-| `F` | Folder tool |
-| `Space + Drag` | Pan canvas |
-| `Scroll` | Zoom canvas |
-| `Delete` | Remove selected |
-| `Esc` | Cancel / Close |
+| `Cmd/Ctrl + 1` | Go to Notes |
+| `Cmd/Ctrl + 2` | Go to Characters |
+| `Cmd/Ctrl + 3` | Go to World |
+| `Cmd/Ctrl + 4` | Go to Scenes |
+| `Cmd/Ctrl + 5` | Go to Timeline |
+| `V` | Select Tool |
+| `Space + Drag` | Pan Canvas |
+| `T` | Text Node |
+| `C` | Character Node |
+| `E` | Event Node |
+| `F` | Folder Node |
+| `Esc` | Close/Cancel |
+| `Delete` | Remove Selected |
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -119,95 +111,81 @@ Open **http://localhost:1420** 🎉
 | Styling | Tailwind CSS |
 | State | Zustand |
 | Database | Dexie.js (IndexedDB) |
-| Desktop | Tauri 2.x |
+| Desktop | Tauri 2.x (ready) |
 | Icons | Lucide React |
+
+---
 
 ## 📁 Project Structure
 
 ```
 src/
-  app-shell/          # Layout, Sidebar, Navigation
-  canvas/             # Infinite canvas with nodes
-  character-creator/  # 3D character tools
-  components/         # Shared UI + Animations
-  dashboard/          # Story management
-  db/                 # Database + persistence
-  scene-editor/       # 3D scene choreography
-  stores/             # Zustand state
-  theme/              # Colors, utilities
-  timeline/           # Story timeline
-  world-builder/      # 3D terrain editor
+  app-shell/         # Sidebar, layout, navigation
+  canvas/            # Infinite canvas with folder nodes
+  character-creator/ # 3D character customizer
+  components/        # Shared UI (GlassCard, AIAssistant, etc.)
+  dashboard/         # Story management
+  db/                # Database schema & persistence
+  scene-editor/      # 3D scene choreography
+  stores/            # Zustand state
+  theme/             # Colors, HSL utilities
+  timeline/          # Story timeline
+  world-builder/     # 3D terrain editor
 ```
-
-## 🎯 Architecture Decisions
-
-### Why Zustand over Redux?
-- Simpler, less boilerplate
-- Better TypeScript support
-- Built-in persistence
-- Perfect for app state
-
-### Why Dexie.js?
-- Local-first (works offline)
-- IndexedDB is fast
-- No backend required
-- User owns their data
-
-### Why Babylon.js over Three.js?
-- Built-in game engine features
-- Better animation system
-- Physics ready (Havok)
-- More complete tooling
-
-## 🎮 User Flow
-
-1. **Splash Screen** → Animated logo reveal
-2. **Dashboard** → Create or select story
-3. **Story Overview** → Navigate to sections
-4. **Notes** → Brainstorm with canvas
-5. **Characters** → Design in 3D
-6. **World** → Sculpt terrain
-7. **Scenes** → Choreograph moments
-8. **Timeline** → Structure narrative
-
-## ✨ Polish Details
-
-- **120fps animations** - Smooth as butter
-- **Reduced motion support** - Accessibility first
-- **Error boundaries** - Graceful failures
-- **Loading skeletons** - Never show blank
-- **Optimistic UI** - Feels instant
-- **Debounced saves** - Auto-save without jank
-
-## 🚀 Roadmap
-
-### v1.0 (Current)
-- ✅ Core features complete
-- ✅ 3D Character Creator
-- ✅ World Builder
-- ✅ Scene Editor
-- ✅ Polish + Animations
-
-### v1.1 (Next)
-- [ ] Cloud sync
-- [ ] Export to video
-- [ ] Mobile responsiveness
-- [ ] Plugin system
-
-### v2.0 (Future)
-- [ ] Multiplayer collaboration
-- [ ] AI story generation
-- [ ] Marketplace for assets
-- [ ] VR support
-
-## 📝 License
-
-MIT - Build amazing stories! 🎉
 
 ---
 
-Built with 💜 by **Alpha X** | *Nintendo would be proud*
+## 🎯 Architecture Highlights
 
-> "Quality is not an act, it is a habit." - Aristotle
+### Local-First Design
+- **Dexie.js** for structured data (IndexedDB)
+- **FileSystem API** for large assets (Tauri)
+- **No backend required** - works offline
 
-**Star ⭐ the repo if you love it!**
+### 3D Engine Strategy
+- **One Engine at a time** - dispose when leaving 3D views
+- **Write-through persistence** - Zustand → Dexie
+- **Lazy loading** - terrain loads on demand
+
+### Folder Node System
+```
+Canvas (Root)
+  ├── Character Node → Click Arrow → Character Canvas
+  │                      └── Notes, Hierarchy
+  ├── Event Node → Click Arrow → Event Canvas
+  │                  └── Timeline, Details
+  └── Folder Node → Click Arrow → Sub-Canvas
+```
+
+---
+
+## 🎨 Design Philosophy
+
+> **"Nintendo-level quality means: polish, delight, and zero jank."**
+
+- Every interaction has feedback
+- Animations are purposeful
+- UI is consistent and predictable
+- Performance is smooth (60fps)
+- Accessible and keyboard-friendly
+
+---
+
+## 🚀 What's Next
+
+- [ ] Cloud sync with Supabase
+- [ ] Export to video (MP4/WebM)
+- [ ] Mobile app (React Native)
+- [ ] Collaboration features
+- [ ] AI image generation
+- [ ] Steam distribution
+
+---
+
+## 📝 License
+
+MIT - Build amazing stories!
+
+---
+
+*Built with ❤️ by Alpha X in a 10-hour one-shot sprint*
