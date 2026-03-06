@@ -16,6 +16,7 @@ import { StoryStatisticsPage } from './dashboard/StoryStatisticsPage';
 import { AssetLoader } from './components/AssetLoader';
 import { AudioManagerPage } from './audio/AudioManagerPage';
 import { DialogueEditorPage } from './dialogue/DialogueEditorPage';
+import { QuestManagerPage } from './quest/QuestManagerPage';
 import { MainLayout } from './app-shell/MainLayout';
 
 export function AppRoutes() {
@@ -38,6 +39,7 @@ export function AppRoutes() {
       <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
       <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
       <Route path="/story/:id/dialogue" element={<MainLayout><DialogueEditorPage /></MainLayout>} />
+      <Route path="/story/:id/quests" element={<MainLayout><QuestManagerPage /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
