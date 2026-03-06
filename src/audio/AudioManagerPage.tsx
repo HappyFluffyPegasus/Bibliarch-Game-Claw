@@ -133,7 +133,7 @@ export function AudioManagerPage() {
                   onClick={() => { setActivePlaylist(playlist.id); setActiveTab('playlist'); }}
                   className={cn(
                     "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors",
-                    activePlaylist === playlist ? "bg-primary/10 text-primary" : "hover:bg-accent"
+                    activePlaylist === playlist.id ? "bg-primary/10 text-primary" : "hover:bg-accent"
                   )}
                 >
                   <ListMusic className="w-4 h-4" />
