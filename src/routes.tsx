@@ -26,6 +26,9 @@ import { DialogueEditorPage } from './dialogue/DialogueEditorPage';
 import { QuestManagerPage } from './quest/QuestManagerPage';
 import { AIWritingAssistantPage } from './ai/AIWritingAssistantPage';
 import { GamePreviewPage } from './preview/GamePreviewPage';
+import { GachaSceneEditorPage } from './scene-editor/GachaSceneEditorPage';
+import { CharacterExpressionSystem } from './character/CharacterExpressionSystem';
+import { WeatherSystemPage } from './world-builder/WeatherSystemPage';
 import { SettingsPage } from './settings/SettingsPage';
 import { MainLayout } from './app-shell/MainLayout';
 
@@ -59,6 +62,9 @@ export function AppRoutes() {
       <Route path="/story/:id/quests" element={<MainLayout><QuestManagerPage /></MainLayout>} />
       <Route path="/ai-assistant" element={<MainLayout><AIWritingAssistantPage /></MainLayout>} />
       <Route path="/preview" element={<MainLayout><GamePreviewPage /></MainLayout>} />
+      <Route path="/gacha-studio" element={<MainLayout><GachaSceneEditorPage /></MainLayout>} />
+      <Route path="/expressions" element={<MainLayout><CharacterExpressionSystem /></MainLayout>} />
+      <Route path="/weather" element={<MainLayout><WeatherSystemPage /></MainLayout>} />
       <Route path="/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
