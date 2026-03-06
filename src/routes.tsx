@@ -9,6 +9,8 @@ import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
 import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
 import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
 import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
+import { ExportPublishPage } from './export/ExportPublishPage';
+import { SceneTransitionsPage } from './transitions/SceneTransitionsPage';
 import { EffectsShowcasePage } from './effects/EffectsShowcasePage';
 import { TimelineSystemPage } from './timeline/TimelineSystemPage';
 import { StoryModePage } from './story-mode/StoryModePage';
@@ -31,6 +33,8 @@ export function AppRoutes() {
       <Route path="/story/:id/world-v2" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
       <Route path="/story/:id/cartography" element={<MainLayout><CartographyEditorPage /></MainLayout>} />
+      <Route path="/story/:id/export" element={<MainLayout><ExportPublishPage /></MainLayout>} />
+      <Route path="/story/:id/transitions" element={<MainLayout><SceneTransitionsPage /></MainLayout>} />
       <Route path="/effects" element={<MainLayout><EffectsShowcasePage /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
