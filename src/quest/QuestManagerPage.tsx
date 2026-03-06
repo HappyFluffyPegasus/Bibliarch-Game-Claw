@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Target, CheckCircle2, Circle, Clock, MapPin, User, 
-  Plus, Trash2, Edit2, Flag, Star, AlertCircle,
-  ChevronDown, ChevronUp
+  Target, CheckCircle2, Circle, MapPin, User, 
+  Plus, Trash2, Edit2, Star,
 } from 'lucide-react';
 import { GlassCard } from '../components/GlassCard';
 import { cn } from '../lib/utils';
@@ -28,8 +27,6 @@ interface Quest {
   rewards: string[];
   location?: string;
   giver?: string;
-  deadline?: string;
-  prerequisites?: string[];
 }
 
 const sampleQuests: Quest[] = [
@@ -64,20 +61,6 @@ const sampleQuests: Quest[] = [
     location: 'Trade Route',
     giver: 'Merchant Guild',
   },
-  {
-    id: '3',
-    title: 'Herb Gathering',
-    description: 'Collect medicinal herbs for the healer.',
-    type: 'optional',
-    status: 'not_started',
-    objectives: [
-      { id: 'o1', description: 'Collect 10 Moonpetal flowers', completed: false },
-      { id: 'o2', description: 'Collect 5 Dragonroot herbs', completed: false },
-    ],
-    rewards: ['100 XP', 'Healing Potion x3'],
-    location: 'Forest',
-    giver: 'Village Healer',
-  },
 ];
 
 const typeColors: Record<QuestType, string> = {
@@ -89,7 +72,7 @@ const typeColors: Record<QuestType, string> = {
 const statusIcons: Record<QuestStatus, typeof CheckCircle2> = {
   active: Circle,
   completed: CheckCircle2,
-  failed: AlertCircle,
+  failed: Circle,
   not_started: Circle,
 };
 
@@ -97,12 +80,9 @@ export function QuestManagerPage() {
   const [quests, setQuests] = useState<Quest[]>(sampleQuests);
   const [selectedQuest, setSelectedQuest] = useState<string | null>('1');
   const [filter, setFilter] = useState<'all' | QuestType>('all');
-  const [showCompleted, setShowCompleted] = useState(true);
-  const [isCreating, setIsCreating] = useState(false);
 
   const filteredQuests = quests.filter(q => {
     if (filter !== 'all' && q.type !== filter) return false;
-    if (!showCompleted && q.status === 'completed') return false;
     return true;
   });
 
@@ -141,10 +121,7 @@ export function QuestManagerPage() {
               <Target className="w-5 h-5" />
               Quests
             </h2>
-            <button 
-              onClick={() => setIsCreating(true)}
-              className="p-2 bg-primary text-primary-foreground rounded-lg"
-            >
+            <button className="p-2 bg-primary text-primary-foreground rounded-lg">
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -156,9 +133,7 @@ export function QuestManagerPage() {
                 onClick={() => setFilter(type)}
                 className={cn(
                   "px-3 py-1 text-xs rounded-full capitalize transition-colors",
-                  filter === type
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted hover:bg-muted/80"
+                  filter === type ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/80"
                 )}
               >
                 {type === 'all' ? 'All' : type}
@@ -169,7 +144,7 @@ export function QuestManagerPage() {
 
         <div className="flex-1 overflow-y-auto p-2">
           <div className="space-y-2">
-            <{filteredQuests.map(quest => {
+            {filteredQuests.map(quest => {
               const StatusIcon = statusIcons[quest.status];
               const progress = Math.round((quest.objectives.filter(o => o.completed).length / quest.objectives.length) * 100);
               
@@ -179,26 +154,20 @@ export function QuestManagerPage() {
                   onClick={() => setSelectedQuest(quest.id)}
                   className={cn(
                     "w-full text-left p-3 rounded-lg border transition-all",
-                    selectedQuest === quest.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/30"
+                    selectedQuest === quest.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/30"
                   )}
                 >
                   <div className="flex items-start gap-3">
                     <StatusIcon className={cn(
                       "w-5 h-5 shrink-0 mt-0.5",
                       quest.status === 'completed' && "text-green-500",
-                      quest.status === 'active' && "text-blue-500",
-                      quest.status === 'failed' && "text-red-500"
+                      quest.status === 'active' && "text-blue-500"
                     )} />
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium truncate">{quest.title}</p>
-                        <span className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded border capitalize",
-                          typeColors[quest.type]
-                        )}>
+                        <span className={cn("text-[10px] px-1.5 py-0.5 rounded border capitalize", typeColors[quest.type])}>
                           {quest.type}
                         </span>
                       </div>
@@ -213,10 +182,7 @@ export function QuestManagerPage() {
                         
                         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                           <div 
-                            className={cn(
-                              "h-full rounded-full transition-all",
-                              quest.status === 'completed' ? "bg-green-500" : "bg-primary"
-                            )}
+                            className={cn("h-full rounded-full transition-all", quest.status === 'completed' ? "bg-green-500" : "bg-primary")}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
@@ -237,10 +203,7 @@ export function QuestManagerPage() {
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={cn(
-                      "text-xs px-2 py-1 rounded border capitalize",
-                      typeColors[selectedQuestData.type]
-                    )}>
+                    <span className={cn("text-xs px-2 py-1 rounded border capitalize", typeColors[selectedQuestData.type])}>
                       {selectedQuestData.type} Quest
                     </span>
                     
@@ -264,24 +227,21 @@ export function QuestManagerPage() {
                   <button className="p-2 hover:bg-accent rounded">
                     <Edit2 className="w-4 h-4" />
                   </button>
-                  <button 
-                    onClick={() => deleteQuest(selectedQuestData.id)}
-                    className="p-2 hover:text-destructive rounded"
-                  >
+                  <button onClick={() => deleteQuest(selectedQuestData.id)} className="p-2 hover:text-destructive rounded">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <{selectedQuestData.location && (
+                {selectedQuestData.location && (
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="w-4 h-4 text-muted-foreground" />
                     <span>{selectedQuestData.location}</span>
                   </div>
                 )}
                 
-                <{selectedQuestData.giver && (
+                {selectedQuestData.giver && (
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-muted-foreground" />
                     <span>{selectedQuestData.giver}</span>
@@ -292,51 +252,35 @@ export function QuestManagerPage() {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">Objectives</h3>
-                  
                   <span className="text-sm text-muted-foreground">
                     {selectedQuestData.objectives.filter(o => o.completed).length} of {selectedQuestData.objectives.length} complete
                   </span>
                 </div>
                 
                 <div className="h-2 bg-muted rounded-full overflow-hidden mb-4">
-                  <div 
-                    className="h-full bg-primary rounded-full transition-all"
-                    style={{ width: `${completionPercentage}%` }}
-                  />
+                  <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${completionPercentage}%` }} />
                 </div>
 
                 <div className="space-y-2">
-                  <{selectedQuestData.objectives.map(objective => (
+                  {selectedQuestData.objectives.map(objective => (
                     <div
                       key={objective.id}
                       onClick={() => toggleObjective(selectedQuestData.id, objective.id)}
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all",
-                        objective.completed
-                          ? "bg-green-500/5 border-green-500/30"
-                          : "bg-card border-border hover:border-primary/30",
+                        objective.completed ? "bg-green-500/5 border-green-500/30" : "bg-card border-border hover:border-primary/30",
                         objective.optional && "border-dashed"
                       )}
                     >
-                      <div className={cn(
-                        "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                        objective.completed
-                          ? "bg-green-500 border-green-500"
-                          : "border-muted-foreground"
-                      )}>
+                      <div className={cn("w-5 h-5 rounded border-2 flex items-center justify-center transition-colors", objective.completed ? "bg-green-500 border-green-500" : "border-muted-foreground")}>
                         {objective.completed && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                       </div>
                       
-                      <span className={cn(
-                        "flex-1",
-                        objective.completed && "line-through text-muted-foreground"
-                      )}>
+                      <span className={cn("flex-1", objective.completed && "line-through text-muted-foreground")}>
                         {objective.description}
                       </span>
                       
-                      <{objective.optional && (
-                        <span className="text-xs text-muted-foreground">Optional</span>
-                      )}
+                      {objective.optional && <span className="text-xs text-muted-foreground">Optional</span>}
                     </div>
                   ))}
                 </div>
@@ -350,11 +294,8 @@ export function QuestManagerPage() {
                 <h3 className="font-semibold mb-3">Rewards</h3>
                 
                 <div className="flex flex-wrap gap-2">
-                  <{selectedQuestData.rewards.map((reward, index) => (
-                    <span 
-                      key={index}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 text-yellow-600 rounded-full text-sm"
-                    >
+                  {selectedQuestData.rewards.map((reward, index) => (
+                    <span key={index} className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 text-yellow-600 rounded-full text-sm">
                       <Star className="w-3.5 h-3.5" />
                       {reward}
                     </span>
@@ -364,9 +305,7 @@ export function QuestManagerPage() {
             </GlassCard>
           </div>
         ) : (
-          <div className="h-full flex items-center justify-center text-muted-foreground">
-            Select a quest to view details
-          </div>
+          <div className="h-full flex items-center justify-center text-muted-foreground">Select a quest to view details</div>
         )}
       </div>
     </div>
