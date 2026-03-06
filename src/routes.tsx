@@ -10,6 +10,7 @@ import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPa
 import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
 import { WorldArchivePage } from './world-builder/WorldArchivePage';
 import { WorldMapEditorPage } from './world-builder/WorldMapEditorPage';
+import { WorldEventsPage } from './world-builder/WorldEventsPage';
 import { PrefabLibraryPage } from './world-builder/PrefabLibraryPage';
 import { TerrainEditorPage } from './world-builder/TerrainEditorPage';
 import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
@@ -43,6 +44,7 @@ export function AppRoutes() {
       <Route path="/story/:id/cartography" element={<MainLayout><CartographyEditorPage /></MainLayout>} />
       <Route path="/terrain-editor" element={<MainLayout><TerrainEditorPage /></MainLayout>} />
       <Route path="/prefabs" element={<MainLayout><PrefabLibraryPage /></MainLayout>} />
+      <Route path="/world-events" element={<MainLayout><WorldEventsPage /></MainLayout>} />
       <Route path="/story/:id/export" element={<MainLayout><ExportPublishPage /></MainLayout>} />
       <Route path="/story/:id/transitions" element={<MainLayout><SceneTransitionsPage /></MainLayout>} />
       <Route path="/effects" element={<MainLayout><EffectsShowcasePage /></MainLayout>} />
