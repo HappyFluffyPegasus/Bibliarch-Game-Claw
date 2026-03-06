@@ -9,6 +9,7 @@ import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
 import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
 import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
 import { WorldArchivePage } from './world-builder/WorldArchivePage';
+import { WorldMapEditorPage } from './world-builder/WorldMapEditorPage';
 import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
 import { ExportPublishPage } from './export/ExportPublishPage';
 import { SceneTransitionsPage } from './transitions/SceneTransitionsPage';
@@ -32,6 +33,7 @@ export function AppRoutes() {
       <Route path="/story/:id/notes" element={<MainLayout><CanvasPage /></MainLayout>} />
       <Route path="/story/:id/characters" element={<MainLayout><CharacterCreatorPage /></MainLayout>} />
       <Route path="/world-builder" element={<MainLayout><WorldArchivePage /></MainLayout>} />
+      <Route path="/world-editor" element={<MainLayout><WorldMapEditorPage /></MainLayout>} />
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/world-v2" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
