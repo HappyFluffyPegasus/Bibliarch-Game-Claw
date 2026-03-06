@@ -14,6 +14,7 @@ import { TimelineSystemPage } from './timeline/TimelineSystemPage';
 import { StoryModePage } from './story-mode/StoryModePage';
 import { StoryStatisticsPage } from './dashboard/StoryStatisticsPage';
 import { AssetLoader } from './components/AssetLoader';
+import { AudioManagerPage } from './audio/AudioManagerPage';
 import { MainLayout } from './app-shell/MainLayout';
 
 export function AppRoutes() {
@@ -34,6 +35,7 @@ export function AppRoutes() {
       <Route path="/story/:id/story" element={<MainLayout><StoryModePage /></MainLayout>} />
       <Route path="/story/:id/stats" element={<MainLayout><StoryStatisticsPage /></MainLayout>} />
       <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
+      <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
