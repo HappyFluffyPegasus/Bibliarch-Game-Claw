@@ -15,7 +15,7 @@ import { ExportPublishPage } from './export/ExportPublishPage';
 import { SceneTransitionsPage } from './transitions/SceneTransitionsPage';
 import { EffectsShowcasePage } from './effects/EffectsShowcasePage';
 import { TimelineSystemPage } from './timeline/TimelineSystemPage';
-import { StoryModePage } from './story-mode/StoryModePage';
+import { TimelineCanvasPage } from './timeline/TimelineCanvasPage';
 import { StoryStatisticsPage } from './dashboard/StoryStatisticsPage';
 import { AssetLoader } from './components/AssetLoader';
 import { AudioManagerPage } from './audio/AudioManagerPage';
@@ -44,7 +44,7 @@ export function AppRoutes() {
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelineSystemPage /></MainLayout>} />
-      <Route path="/story/:id/story" element={<MainLayout><StoryModePage /></MainLayout>} />
+      <Route path="/story/:id/timeline-canvas" element={<MainLayout><TimelineCanvasPage /></MainLayout>} />
       <Route path="/story/:id/stats" element={<MainLayout><StoryStatisticsPage /></MainLayout>} />
       <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
       <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
