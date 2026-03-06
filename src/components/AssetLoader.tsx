@@ -209,7 +209,7 @@ export function AssetLoader() {
 
         <div className="flex-1 overflow-y-auto p-2">
           <div className="space-y-1">
-            <{folders.filter(f => f.parentId === 'root' || f.parentId === null).map(folder => (
+            {folders.filter(f => f.parentId === 'root' || f.parentId === null).map(folder => (
               <button
                 key={folder.id}
                 onClick={() => setCurrentFolder(folder.id)}
@@ -328,7 +328,7 @@ export function AssetLoader() {
             </div>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              <{filteredAssets.map(asset => (
+              {filteredAssets.map(asset => (
                 <motion.div
                   key={asset.id}
                   layoutId={asset.id}
@@ -365,7 +365,7 @@ export function AssetLoader() {
             </div>
           ) : (
             <div className="space-y-2">
-              <{filteredAssets.map(asset => (
+              {filteredAssets.map(asset => (
                 <div
                   key={asset.id}
                   onClick={() => toggleAssetSelection(asset.id)}

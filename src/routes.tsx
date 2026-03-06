@@ -4,9 +4,13 @@ import { StoryOverviewPage } from './dashboard/StoryOverviewPage';
 import { CanvasPage } from './canvas/CanvasPage';
 import { CharacterCreatorPage } from './character-creator/CharacterCreatorPage';
 import { SceneEditorPage } from './scene-editor/SceneEditorPage';
+import { EnhancedSceneEditorPage } from './scene-editor/EnhancedSceneEditorPage';
 import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
+import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
+import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
 import { TimelineSystemPage } from './timeline/TimelineSystemPage';
 import { StoryModePage } from './story-mode/StoryModePage';
+import { AssetLoader } from './components/AssetLoader';
 import { MainLayout } from './app-shell/MainLayout';
 
 export function AppRoutes() {
@@ -17,9 +21,13 @@ export function AppRoutes() {
       <Route path="/story/:id/notes" element={<MainLayout><CanvasPage /></MainLayout>} />
       <Route path="/story/:id/characters" element={<MainLayout><CharacterCreatorPage /></MainLayout>} />
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
+      <Route path="/story/:id/world-v2" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
+      <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
+      <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelineSystemPage /></MainLayout>} />
       <Route path="/story/:id/story" element={<MainLayout><StoryModePage /></MainLayout>} />
+      <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
