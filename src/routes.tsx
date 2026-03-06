@@ -19,6 +19,7 @@ import { AssetLoader } from './components/AssetLoader';
 import { AudioManagerPage } from './audio/AudioManagerPage';
 import { DialogueEditorPage } from './dialogue/DialogueEditorPage';
 import { QuestManagerPage } from './quest/QuestManagerPage';
+import { AIWritingAssistantPage } from './ai/AIWritingAssistantPage';
 import { SettingsPage } from './settings/SettingsPage';
 import { MainLayout } from './app-shell/MainLayout';
 
@@ -45,6 +46,7 @@ export function AppRoutes() {
       <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
       <Route path="/story/:id/dialogue" element={<MainLayout><DialogueEditorPage /></MainLayout>} />
       <Route path="/story/:id/quests" element={<MainLayout><QuestManagerPage /></MainLayout>} />
+      <Route path="/ai-assistant" element={<MainLayout><AIWritingAssistantPage /></MainLayout>} />
       <Route path="/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
