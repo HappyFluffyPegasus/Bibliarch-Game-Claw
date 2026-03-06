@@ -189,7 +189,7 @@ export function ParticleWeatherSystem({
         >
           <GlassCard 
             className="w-full max-w-md p-6"
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <div>
