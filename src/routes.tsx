@@ -8,6 +8,7 @@ import { EnhancedSceneEditorPage } from './scene-editor/EnhancedSceneEditorPage'
 import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
 import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
 import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
+import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
 import { TimelineSystemPage } from './timeline/TimelineSystemPage';
 import { StoryModePage } from './story-mode/StoryModePage';
 import { AssetLoader } from './components/AssetLoader';
@@ -23,6 +24,7 @@ export function AppRoutes() {
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/world-v2" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
+      <Route path="/story/:id/cartography" element={<MainLayout><CartographyEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelineSystemPage /></MainLayout>} />
