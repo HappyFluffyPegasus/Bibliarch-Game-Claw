@@ -6,14 +6,6 @@ import { CharacterCreatorPage } from './character-creator/CharacterCreatorPage';
 import { SceneEditorPage } from './scene-editor/SceneEditorPage';
 import { EnhancedSceneEditorPage } from './scene-editor/EnhancedSceneEditorPage';
 import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
-import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
-import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
-import { WorldArchivePage } from './world-builder/WorldArchivePage';
-import { WorldMapEditorPage } from './world-builder/WorldMapEditorPage';
-import { WorldEventsPage } from './world-builder/WorldEventsPage';
-import { PrefabLibraryPage } from './world-builder/PrefabLibraryPage';
-import { TerrainEditorPage } from './world-builder/TerrainEditorPage';
-import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
 import { ExportPublishPage } from './export/ExportPublishPage';
 import { SceneTransitionsPage } from './transitions/SceneTransitionsPage';
 import { EffectsShowcasePage } from './effects/EffectsShowcasePage';
@@ -28,44 +20,40 @@ import { AIWritingAssistantPage } from './ai/AIWritingAssistantPage';
 import { GamePreviewPage } from './preview/GamePreviewPage';
 import { GachaSceneEditorPage } from './scene-editor/GachaSceneEditorPage';
 import { CharacterExpressionSystem } from './character/CharacterExpressionSystem';
-import { WeatherSystemPage } from './world-builder/WeatherSystemPage';
 import { SettingsPage } from './settings/SettingsPage';
 import { MainLayout } from './app-shell/MainLayout';
 
 export function AppRoutes() {
   return (
     <Routes>
+      {/* Main Routes */}
       <Route path="/" element={<DashboardPage />} />
       <Route path="/story/:id" element={<MainLayout><StoryOverviewPage /></MainLayout>} />
+      
+      {/* Story Content */}
       <Route path="/story/:id/notes" element={<MainLayout><CanvasPage /></MainLayout>} />
       <Route path="/story/:id/characters" element={<MainLayout><CharacterCreatorPage /></MainLayout>} />
-      <Route path="/world-builder" element={<MainLayout><WorldArchivePage /></MainLayout>} />
-      <Route path="/world-editor" element={<MainLayout><WorldMapEditorPage /></MainLayout>} />
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
-      <Route path="/story/:id/world-v2" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
-      <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
-      <Route path="/story/:id/cartography" element={<MainLayout><CartographyEditorPage /></MainLayout>} />
-      <Route path="/terrain-editor" element={<MainLayout><TerrainEditorPage /></MainLayout>} />
-      <Route path="/prefabs" element={<MainLayout><PrefabLibraryPage /></MainLayout>} />
-      <Route path="/world-events" element={<MainLayout><WorldEventsPage /></MainLayout>} />
-      <Route path="/story/:id/export" element={<MainLayout><ExportPublishPage /></MainLayout>} />
-      <Route path="/story/:id/transitions" element={<MainLayout><SceneTransitionsPage /></MainLayout>} />
-      <Route path="/effects" element={<MainLayout><EffectsShowcasePage /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelineSystemPage /></MainLayout>} />
       <Route path="/story/:id/timeline-canvas" element={<MainLayout><TimelineCanvasPage /></MainLayout>} />
-      <Route path="/story/:id/stats" element={<MainLayout><StoryStatisticsPage /></MainLayout>} />
-      <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
-      <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
       <Route path="/story/:id/dialogue" element={<MainLayout><DialogueEditorPage /></MainLayout>} />
       <Route path="/story/:id/quests" element={<MainLayout><QuestManagerPage /></MainLayout>} />
-      <Route path="/ai-assistant" element={<MainLayout><AIWritingAssistantPage /></MainLayout>} />
-      <Route path="/preview" element={<MainLayout><GamePreviewPage /></MainLayout>} />
+      <Route path="/story/:id/stats" element={<MainLayout><StoryStatisticsPage /></MainLayout>} />
+      <Route path="/story/:id/export" element={<MainLayout><ExportPublishPage /></MainLayout>} />
+      
+      {/* Tools */}
       <Route path="/gacha-studio" element={<MainLayout><GachaSceneEditorPage /></MainLayout>} />
       <Route path="/expressions" element={<MainLayout><CharacterExpressionSystem /></MainLayout>} />
-      <Route path="/weather" element={<MainLayout><WeatherSystemPage /></MainLayout>} />
+      <Route path="/assets" element={<MainLayout><AssetLoader /></MainLayout>} />
+      <Route path="/audio" element={<MainLayout><AudioManagerPage /></MainLayout>} />
+      <Route path="/effects" element={<MainLayout><EffectsShowcasePage /></MainLayout>} />
+      <Route path="/preview" element={<MainLayout><GamePreviewPage /></MainLayout>} />
+      <Route path="/ai-assistant" element={<MainLayout><AIWritingAssistantPage /></MainLayout>} />
       <Route path="/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
+      
+      {/* Redirects */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
