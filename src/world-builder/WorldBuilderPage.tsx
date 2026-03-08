@@ -44,8 +44,6 @@ export function WorldBuilderPage() {
   const [seaLevel, setSeaLevel] = useState(0);
   const [showWater, setShowWater] = useState(true);
   const [isPainting, setIsPainting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) loadStory(id);
@@ -53,69 +51,58 @@ export function WorldBuilderPage() {
 
   // Initialize Babylon.js scene
   useEffect(() => {
-    try {
-      if (!canvasRef.current) {
-        setError('Canvas not found');
-        return;
-      }
+    if (!canvasRef.current) return;
 
-      const canvas = canvasRef.current;
-      const engine = new Engine(canvas, true, { preserveDrawingBuffer: true });
-      engineRef.current = engine;
+    const canvas = canvasRef.current;
+    const engine = new Engine(canvas, true, { preserveDrawingBuffer: true });
+    engineRef.current = engine;
 
-      const scene = new Scene(engine);
-      sceneRef.current = scene;
-      scene.clearColor = new Color4(0.05, 0.07, 0.13, 1);
+    const scene = new Scene(engine);
+    sceneRef.current = scene;
+    scene.clearColor = new Color4(0.05, 0.07, 0.13, 1);
 
-      // Camera
-      const camera = new ArcRotateCamera(
-        'camera',
-        -Math.PI / 2,
-        Math.PI / 3,
-        50,
-        Vector3.Zero(),
-        scene
-      );
-      camera.attachControl(canvas, true);
-      camera.wheelPrecision = 30;
-      camera.lowerRadiusLimit = 10;
-      camera.upperRadiusLimit = 200;
+    // Camera
+    const camera = new ArcRotateCamera(
+      'camera',
+      -Math.PI / 2,
+      Math.PI / 3,
+      50,
+      Vector3.Zero(),
+      scene
+    );
+    camera.attachControl(canvas, true);
+    camera.wheelPrecision = 30;
+    camera.lowerRadiusLimit = 10;
+    camera.upperRadiusLimit = 200;
 
-      // Lighting
-      const hemiLight = new HemisphericLight('hemi', new Vector3(0, 1, 0), scene);
-      hemiLight.intensity = 0.6;
-      hemiLight.groundColor = new Color3(0.1, 0.1, 0.15);
+    // Lighting
+    const hemiLight = new HemisphericLight('hemi', new Vector3(0, 1, 0), scene);
+    hemiLight.intensity = 0.6;
+    hemiLight.groundColor = new Color3(0.1, 0.1, 0.15);
 
-      const dirLight = new DirectionalLight('dir', new Vector3(-1, -2, -1), scene);
-      dirLight.position = new Vector3(20, 40, 20);
-      dirLight.intensity = 0.8;
+    const dirLight = new DirectionalLight('dir', new Vector3(-1, -2, -1), scene);
+    dirLight.position = new Vector3(20, 40, 20);
+    dirLight.intensity = 0.8;
 
-      // Create terrain
-      createTerrain(scene);
+    // Create terrain
+    createTerrain(scene);
 
-      // Create water plane
-      createWater(scene);
+    // Create water plane
+    createWater(scene);
 
-      // Render loop
-      engine.runRenderLoop(() => {
-        scene.render();
-      });
+    // Render loop
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
 
-      setIsLoading(false);
+    const handleResize = () => engine.resize();
+    window.addEventListener('resize', handleResize);
 
-      const handleResize = () => engine.resize();
-      window.addEventListener('resize', handleResize);
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        scene.dispose();
-        engine.dispose();
-      };
-    } catch (err) {
-      console.error('World Builder Error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to initialize 3D scene');
-      setIsLoading(false);
-    }
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      scene.dispose();
+      engine.dispose();
+    };
   }, []);
 
   const createTerrain = (scene: Scene) => {
@@ -269,38 +256,8 @@ export function WorldBuilderPage() {
       </div>
 
       {/* 3D Viewport */}
-      <div className="flex-1 relative">
-        {/* Loading State */}
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-            <div className="text-center">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading 3D World...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/90 z-20">
-            <GlassCard className="p-6 max-w-md">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">⚠️</span>
-                </div>
-                <h3 className="font-bold text-lg mb-2">Failed to Load 3D Scene</h3>
-                <p className="text-muted-foreground mb-4">{error}</p>
-                <button 
-                  onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg"
-                >
-                  Retry
-                </button>
-              </div>
-            </GlassCard>
-          </div>
-        )}
-
+      <div className="flex-1 relative"
+>
         <canvas
           ref={canvasRef}
           className="w-full h-full outline-none"
