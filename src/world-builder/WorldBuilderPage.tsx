@@ -54,6 +54,12 @@ export function WorldBuilderPage() {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
+    
+    // Set explicit canvas dimensions for Babylon.js
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width || 800;
+    canvas.height = rect.height || 600;
+    
     const engine = new Engine(canvas, true, { preserveDrawingBuffer: true });
     engineRef.current = engine;
 
@@ -256,13 +262,11 @@ export function WorldBuilderPage() {
       </div>
 
       {/* 3D Viewport */}
-      <div className="flex-1 relative"
->
+      <div className="flex-1 relative overflow-hidden" style={{ minHeight: '400px' }}>
         <canvas
           ref={canvasRef}
-          className="w-full h-full outline-none"
-          onClick={handleCanvasClick}
-          style={{ touchAction: 'none' }}
+          className="w-full h-full outline-none block"
+          style={{ touchAction: 'none', width: '100%', height: '100%' }}
         />
 
         {/* Material Palette */}
