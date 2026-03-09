@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
-import { Plus, MessageSquare, GitBranch } from 'lucide-react'
+import { Plus, MessageSquare } from 'lucide-react'
 
 interface DialogueNode {
   id: string

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
-import { Plus, Calendar, Clock } from 'lucide-react'
+import { Plus, Clock } from 'lucide-react'
 
 interface TimelineEvent {
   id: string

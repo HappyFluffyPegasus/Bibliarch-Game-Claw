@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
-import { Play, Pause, RotateCcw, FastForward } from 'lucide-react'
+import { Play, Pause, RotateCcw } from 'lucide-react'
 
 export function GamePreviewPage() {
   const [isPlaying, setIsPlaying] = useState(false)

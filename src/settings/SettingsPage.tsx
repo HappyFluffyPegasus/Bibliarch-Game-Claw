@@ -1,6 +1,6 @@
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
-import { Moon, Sun, Volume2, Monitor } from 'lucide-react'
+import { Moon, Volume2, Monitor } from 'lucide-react'
 
 export function SettingsPage() {
   return (

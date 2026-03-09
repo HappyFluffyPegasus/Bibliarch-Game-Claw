@@ -7,7 +7,7 @@ export function LifeModePage() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [gameTime, setGameTime] = useState(0)
   const [speed, setSpeed] = useState(1)
-  const [activeCharacters, setActiveCharacters] = useState(0)
+  const [activeCharacters] = useState(0)
   
   useEffect(() => {
     if (!isPlaying) return

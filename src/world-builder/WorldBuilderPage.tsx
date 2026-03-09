@@ -3,7 +3,7 @@ import { useStoryStore } from '@/stores/storyStore'
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-import { Plus, Map, Mountain, Cloud, TreePine, Building2, Home } from 'lucide-react'
+import { Plus, Map, Mountain, TreePine, Building2, Home } from 'lucide-react'
 
 const locationTypes = [
   { type: 'world', icon: Map, label: 'World' },
