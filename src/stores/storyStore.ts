@@ -17,7 +17,7 @@ interface StoryState {
   createLocation: (storyId: string, name: string, type: Location['type']) => Promise<Location>
 }
 
-export const useStoryStore = create<StoryState>()((set, get) => ({
+export const useStoryStore = create<StoryState>()((set) => ({
   stories: [],
   currentStory: null,
   characters: [],

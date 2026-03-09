@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from './app-shell/MainLayout'
 import { DashboardPage } from './dashboard/DashboardPage'
 
-// Placeholder components for now
 function Placeholder({ name }: { name: string }) {
   return (
     <div className="p-8">
@@ -15,7 +14,7 @@ function Placeholder({ name }: { name: string }) {
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout><Outlet /></MainLayout>}>
+      <Route path="/" element={<MainLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="characters/*" element={<Placeholder name="Characters" />} />
         <Route path="world/*" element={<Placeholder name="World Builder" />} />
@@ -27,5 +26,3 @@ export function AppRoutes() {
     </Routes>
   )
 }
-
-import { Outlet } from 'react-router-dom'
