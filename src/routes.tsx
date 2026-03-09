@@ -6,6 +6,19 @@ import { CharacterCreatorPage } from './character-creator/CharacterCreatorPage';
 import { SceneEditorPage } from './scene-editor/SceneEditorPage';
 import { EnhancedSceneEditorPage } from './scene-editor/EnhancedSceneEditorPage';
 import { WorldBuilderPage } from './world-builder/WorldBuilderPage';
+import { WorldArchivePage } from './world-builder/WorldArchivePage';
+import { WorldMapEditorPage } from './world-builder/WorldMapEditorPage';
+import { WorldEventsPage } from './world-builder/WorldEventsPage';
+import { WeatherSystemPage } from './world-builder/WeatherSystemPage';
+import { TerrainEditorPage } from './world-builder/TerrainEditorPage';
+import { HeightmapImporter } from './world-builder/HeightmapImporter';
+import { ProceduralGenerator } from './world-builder/ProceduralGenerator';
+import { EntityBrush } from './world-builder/EntityBrush';
+import { LODSystem } from './world-builder/LODSystem';
+import { PrefabLibraryPage } from './world-builder/PrefabLibraryPage';
+import { CartographyEditorPage } from './world-builder/CartographyEditorPage';
+import { BuildingInteriorEditor } from './world-builder/BuildingInteriorEditor';
+import { EnhancedWorldBuilderPage } from './world-builder/EnhancedWorldBuilderPage';
 import { ExportPublishPage } from './export/ExportPublishPage';
 import { SceneTransitionsPage } from './transitions/SceneTransitionsPage';
 import { EffectsShowcasePage } from './effects/EffectsShowcasePage';
@@ -33,7 +46,21 @@ export function AppRoutes() {
       {/* Story Content */}
       <Route path="/story/:id/notes" element={<MainLayout><CanvasPage /></MainLayout>} />
       <Route path="/story/:id/characters" element={<MainLayout><CharacterCreatorPage /></MainLayout>} />
+      {/* World Builder Routes */}
       <Route path="/story/:id/world" element={<MainLayout><WorldBuilderPage /></MainLayout>} />
+      <Route path="/story/:id/world-archive" element={<MainLayout><WorldArchivePage /></MainLayout>} />
+      <Route path="/story/:id/world-map" element={<MainLayout><WorldMapEditorPage /></MainLayout>} />
+      <Route path="/story/:id/world-events" element={<MainLayout><WorldEventsPage /></MainLayout>} />
+      <Route path="/story/:id/weather" element={<MainLayout><WeatherSystemPage /></MainLayout>} />
+      <Route path="/story/:id/terrain" element={<MainLayout><TerrainEditorPage /></MainLayout>} />
+      <Route path="/story/:id/heightmap" element={<MainLayout><HeightmapImporter /></MainLayout>} />
+      <Route path="/story/:id/procedural" element={<MainLayout><ProceduralGenerator /></MainLayout>} />
+      <Route path="/story/:id/entity-brush" element={<MainLayout><EntityBrush /></MainLayout>} />
+      <Route path="/story/:id/lod" element={<MainLayout><LODSystem /></MainLayout>} />
+      <Route path="/story/:id/prefabs" element={<MainLayout><PrefabLibraryPage /></MainLayout>} />
+      <Route path="/story/:id/cartography" element={<MainLayout><CartographyEditorPage /></MainLayout>} />
+      <Route path="/story/:id/interior" element={<MainLayout><BuildingInteriorEditor /></MainLayout>} />
+      <Route path="/story/:id/world-enhanced" element={<MainLayout><EnhancedWorldBuilderPage /></MainLayout>} />
       <Route path="/story/:id/scenes" element={<MainLayout><SceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/scenes-v2" element={<MainLayout><EnhancedSceneEditorPage /></MainLayout>} />
       <Route path="/story/:id/timeline" element={<MainLayout><TimelineSystemPage /></MainLayout>} />
