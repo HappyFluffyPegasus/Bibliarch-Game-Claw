@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Color3 } from '@babylonjs/core'
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Color3, Color4 } from '@babylonjs/core'
 
 interface BabylonViewerProps {
   modelUrl?: string
@@ -17,7 +17,7 @@ export function BabylonViewer({ modelUrl, className }: BabylonViewerProps) {
     engineRef.current = engine
     
     const scene = new Scene(engine)
-    scene.clearColor = new Color3(0.05, 0.05, 0.1)
+    scene.clearColor = new Color4(0.05, 0.05, 0.1, 1)
     
     // Camera
     const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 10, Vector3.Zero(), scene)

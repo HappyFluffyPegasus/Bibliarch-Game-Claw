@@ -1,5 +1,5 @@
-import { useStoryStore } from '@/stores/storyStore'
-import { personalityAnalyzer } from '@/ai/personalityAnalyzer'
+// import { useStoryStore } from '@/stores/storyStore'
+// import { personalityAnalyzer } from '@/ai/personalityAnalyzer'
 
 // Needs System (Sims-style)
 export interface CharacterNeeds {
@@ -163,14 +163,14 @@ export class LifeSimulation {
   }
   
   // Trigger MAJOR event
-  private triggerMajorEvent(characterId: string) {
+  private triggerMajorEvent(_characterId: string) {
     const event = MAJOR_EVENT_TEMPLATES[Math.floor(Math.random() * MAJOR_EVENT_TEMPLATES.length)]
     console.log(`[LifeMode] MAJOR EVENT: ${event.name} - ${event.description}`)
     // In real implementation, this would show the event preview modal
   }
   
   // Trigger MINOR event
-  private triggerMinorEvent(characterId: string) {
+  private triggerMinorEvent(_characterId: string) {
     const event = MINOR_EVENT_TEMPLATES[Math.floor(Math.random() * MINOR_EVENT_TEMPLATES.length)]
     console.log(`[LifeMode] Minor event: ${event.name}`)
     // In real implementation, this would show a subtle notification
