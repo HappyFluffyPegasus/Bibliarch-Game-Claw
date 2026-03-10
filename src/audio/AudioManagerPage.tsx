@@ -13,11 +13,21 @@ export function AudioManagerPage() {
     <div className="max-w-2xl">
       <header className="mb-6">
         <h1 className="text-2xl font-bold">Audio Manager</h1>
+        <p className="text-muted-foreground">Manage music and sound effects</p>
       </header>
       
-      <GlassCard className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <span className="font-medium">Master Volume</span>
+      <GlassCard className="p-6 mb-4">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </div>
+            <div>
+              <h3 className="font-medium">Master Volume</h3>
+              <p className="text-sm text-muted-foreground">{isMuted ? 'Muted' : `${masterVolume}%`}</p>
+            </div>
+          </div>
+          
           <Button variant="outline" size="sm" onClick={() => setIsMuted(!isMuted)}>
             {isMuted ? 'Unmute' : 'Mute'}
           </Button>
@@ -35,7 +45,13 @@ export function AudioManagerPage() {
         
         <div className="space-y-4">
           <div>
-            <label className="text-sm mb-2 block">Music: {musicVolume}%</label>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Music className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm">Music</span>
+              </div>
+              <span className="text-sm text-muted-foreground">{musicVolume}%</span>
+            </div>
             <input
               type="range"
               min="0"
@@ -48,7 +64,13 @@ export function AudioManagerPage() {
           </div>
           
           <div>
-            <label className="text-sm mb-2 block">Sound Effects: {sfxVolume}%</label>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm">Sound Effects</span>
+              </div>
+              <span className="text-sm text-muted-foreground">{sfxVolume}%</span>
+            </div>
             <input
               type="range"
               min="0"
