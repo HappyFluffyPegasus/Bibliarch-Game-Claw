@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { GlassCard } from '@/components/GlassCard'
-import { Button } from '@/components/Button'
 import { Sun, Cloud, CloudRain, CloudLightning, Snowflake, Wind } from 'lucide-react'
 
 const weatherTypes = [
