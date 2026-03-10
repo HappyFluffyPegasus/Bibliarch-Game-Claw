@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GlassCard } from '@/components/GlassCard'
 import { Button } from '@/components/Button'
-import { Download, Share2, Globe } from 'lucide-react'
+import { Download, Globe } from 'lucide-react'
 
 const exportFormats = [
   { id: 'web', name: 'Web (HTML)', description: 'Play in browser', icon: Globe },
