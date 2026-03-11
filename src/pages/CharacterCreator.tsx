@@ -275,9 +275,16 @@ function AppearanceTab({ character, onUpdate }: { character: Character; onUpdate
       <div>
         <h3 className="font-semibold mb-4">3D Preview</h3>
         <div className="rounded-xl overflow-hidden border border-white/10">
-          <BabylonViewer height="400px" />
+          <BabylonViewer 
+            height="400px" 
+            hairColor={character.appearance.hairColor}
+            eyeColor={character.appearance.eyeColor}
+            skinTone={character.appearance.skinTone}
+            characterColor="#60a5fa"
+            animate={true}
+          />
         </div>
-        <p className="text-sm text-white/40 mt-2 text-center">3D character preview will update based on appearance settings</p>
+        <p className="text-sm text-white/40 mt-2 text-center">3D character preview updates with appearance settings</p>
       </div>
     </div>
   )
